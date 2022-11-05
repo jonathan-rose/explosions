@@ -1,5 +1,6 @@
 import 'phaser';
 import Button from '../Objects/Button';
+import Player from '../Objects/Player';
 
 export default class GameScene extends Phaser.Scene {
     constructor () {
@@ -24,6 +25,8 @@ export default class GameScene extends Phaser.Scene {
         logo.setCollideWorldBounds(true);
 
         emitter.startFollow(logo);
+
+        var player = new Player(this, 50, 50, 'player');
     }
 
     update () {
