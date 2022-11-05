@@ -6,6 +6,12 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 module.exports = {
   mode: "development",
   devtool: "eval-source-map",
+  devServer: {
+    static: path.resolve(__dirname, '../'),
+    host: 'localhost',
+    port: 8080,
+    open: false
+  },
   module: {
     rules: [
       {
@@ -24,6 +30,9 @@ module.exports = {
         use: "file-loader"
       }
     ]
+  },
+  output: {
+    path: path.resolve(__dirname, "dist")
   },
   plugins: [
     new CleanWebpackPlugin({
