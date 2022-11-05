@@ -1,6 +1,8 @@
 import 'phaser';
-import Button from '../Objects/Button';
 import Player from '../Objects/Player';
+
+var player;
+var keys;
 
 export default class GameScene extends Phaser.Scene {
     constructor () {
@@ -9,27 +11,33 @@ export default class GameScene extends Phaser.Scene {
 
     create () {
         this.add.image(400, 300, 'sky');
-
-        var particles = this.add.particles('green');
-
-        var emitter = particles.createEmitter({
-            speed: 100,
-            scale: { start: 1, end: 0 },
-            blendMode: 'ADD'
+        player = new Player(this, 50, 50, 'player');
+        
+        keys = this.input.keyboard.addKeys({
+            'up': Phaser.Input.Keyboard.KeyCodes.UP,
+            'down': Phaser.Input.Keyboard.KeyCodes.DOWN,
+            'left': Phaser.Input.Keyboard.KeyCodes.LEFT,
+            'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
         });
 
-        var logo = this.physics.add.image(400, 100, 'logo');
-
-        logo.setVelocity(100, 200);
-        logo.setBounce(1, 1);
-        logo.setCollideWorldBounds(true);
-
-        emitter.startFollow(logo);
-
-        var player = new Player(this, 50, 50, 'player');
+        
     }
 
     update () {
+        if (keys.left.isDown) {
+            player.moveLeft(1);
+        }
 
+        if (keys.right.isDown) {
+            player.moveRight(1);
+        }
+        
+        if (keys.up.isDown) {
+            player.moveUp(1);
+        }
+        
+        if (keys.down.isDown) {
+            player.moveDown(1);
+        }
     }
 };
