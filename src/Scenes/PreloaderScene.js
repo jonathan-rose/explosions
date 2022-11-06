@@ -73,6 +73,8 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.image('player', 'assets/img/player.png');
         this.load.image('coolometer', 'assets/img/coolometerBackground.png');
 
+        this.load.audio('music', ['assets/audio/turn_around_game_2.mp3']);
+
         // ....
 
 
