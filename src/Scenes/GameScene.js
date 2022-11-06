@@ -10,6 +10,8 @@ var isLooking;
 var coolometerCount;
 var coolometerMax;
 
+var speed = 50;
+
 export default class GameScene extends Phaser.Scene {
 
     constructor () {
@@ -48,20 +50,20 @@ export default class GameScene extends Phaser.Scene {
 
     update () {
         if (keys.left.isDown) {
-            player.moveLeft(1);
+            player.moveLeft(speed);
         }
 
         if (keys.right.isDown) {
-            player.moveRight(1);
+            player.moveRight(speed);
         }
 
         if (keys.up.isDown) {
-            player.moveUp(1);
+            player.moveUp(speed);
             isLooking = true; // DELETE ME ONCE isLooking IS DONE
         }
 
         if (keys.down.isDown) {
-            player.moveDown(1);
+            player.moveDown(speed);
             isLooking = false; // DELETE ME ONCE isLooking IS DONE
         }
 
