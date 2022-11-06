@@ -20,6 +20,14 @@ export default class GameScene extends Phaser.Scene {
         this.add.image(400, 300, 'sky');
         this.add.image(700, 300, 'coolometer');
 
+        // @TODO: currently not respecting whether the game sound is enabled
+        this.sys.game.globals.music = this.sound.add(
+            'music',
+            {volume: 0.5,
+             loop: true }
+        );
+        this.sys.game.globals.music.play();
+
         this.score = new Score(this);
 
         player = new Player(this, 50, 50, 'player');
