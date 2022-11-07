@@ -9,6 +9,8 @@ var graphics;
 var isLooking;
 var coolometerCount;
 var coolometerMax;
+var sightcone;
+var sightconeAngle;
 
 export default class GameScene extends Phaser.Scene {
 
@@ -44,15 +46,20 @@ export default class GameScene extends Phaser.Scene {
         isLooking = true;
         coolometerCount = 0;
         coolometerMax = 500;
+
+        sightcone = this.add.triangle(200, 200, 0, 148, 148, 148, 74, 0, 0x6666ff);
+        sightconeAngle = 0;
     }
 
     update () {
         if (keys.left.isDown) {
             player.moveLeft(1);
+            sightconeAngle -= 0.2;
         }
 
         if (keys.right.isDown) {
             player.moveRight(1);
+            sightconeAngle += 0.2;
         }
 
         if (keys.up.isDown) {
@@ -79,5 +86,12 @@ export default class GameScene extends Phaser.Scene {
         rectangle.setSize(100, coolometerCount);
         rectangle.y = 550 - coolometerCount;
         graphics.fillRectShape(rectangle);
+
+        sightcone.x = player.x;
+        sightcone.y = player.y;
+        Phaser.Math.RotateAroundDistance(sightcone, player.x, player.y, sightconeAngle, 120);
+        const angleDeg = Math.atan2(sightcone.y - player.y, sightcone.x - player.x) * 180 / Math.PI;
+        sightcone.angle = angleDeg+270;
+        //Phaser.Math.RotateAround(sightcone, player.center, 0.01);
     }
 };
