@@ -42,7 +42,7 @@ export default class GameScene extends Phaser.Scene {
             'left': Phaser.Input.Keyboard.KeyCodes.LEFT,
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
             'return': Phaser.Input.Keyboard.KeyCodes.SPACE, // Remove on release
-            'ex': Phaser.Input.Keyboard.KeyCodes.X,
+            'x': Phaser.Input.Keyboard.KeyCodes.X,
         });
 
         graphics = this.add.graphics({ fillStyle: { color: 0x00ffff }});
@@ -51,10 +51,13 @@ export default class GameScene extends Phaser.Scene {
         coolometerCount = 0;
         coolometerMax = 500;
 
-        console.log(this);
+        window.GameScene=this;
     }
 
     update () {
+
+        graphics.clear();
+
         if (keys.left.isDown) {
             player.moveLeft();
         }
@@ -77,8 +80,11 @@ export default class GameScene extends Phaser.Scene {
             player.setLocation(100, 100);
         }
 
-        if (keys.ex.isDown) { // Remove on release
-            exploder.explode(50);
+        if (keys.x.isDown) { // Remove on release
+            var radius = exploder.explode(100);
+            graphics.clear();
+            graphics.fillCircleShape(radius); 
+            // How the holy moley do I get this to happen from inside the Exploder class?
         }
 
         if (isLooking && coolometerCount<coolometerMax){
@@ -90,10 +96,10 @@ export default class GameScene extends Phaser.Scene {
 
         this.score.setCombo(coolometerCount);
         this.score.incScore();
-
-        graphics.clear();
+        
         rectangle.setSize(100, coolometerCount);
         rectangle.y = 550 - coolometerCount;
         graphics.fillRectShape(rectangle);
+
     }
 };

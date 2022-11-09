@@ -20,6 +20,7 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
     }
 
     explode(strength) {
-        this.blast = new Phaser.Geom.Circle(this.x, this.y, strength);
+        this.radius = new Phaser.Geom.Circle(this.x, this.y, strength);
+        return this.radius;
     }
 }
