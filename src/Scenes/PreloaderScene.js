@@ -74,7 +74,8 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.image('exploder', 'assets/img/exploder.png');
         this.load.image('coolometer', 'assets/img/coolometerBackground.png');
 
-        this.load.audio('music', ['assets/audio/turn_around_game_2.mp3']);
+        this.load.audio('music', ['assets/audio/dont_look_back.mp3']);
+        this.load.audio('musicMuffled', ['assets/audio/dont_look_back-muffled.mp3']);
 
         // ....
 
