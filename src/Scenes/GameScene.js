@@ -11,6 +11,8 @@ var coolometerCount;
 var coolometerMax;
 var sightcone;
 var sightconeAngle;
+var sightconeRotateSpeed;
+var explosion;
 
 export default class GameScene extends Phaser.Scene {
 
@@ -21,6 +23,7 @@ export default class GameScene extends Phaser.Scene {
     create () {
         this.add.image(400, 300, 'sky');
         this.add.image(700, 300, 'coolometer');
+        explosion = this.add.image(400, 300, 'logo');
 
         // @TODO: currently not respecting whether the game sound is enabled
         this.sys.game.globals.music = this.sound.add(
@@ -49,17 +52,21 @@ export default class GameScene extends Phaser.Scene {
 
         sightcone = this.add.triangle(200, 200, 0, 148, 148, 148, 74, 0, 0x6666ff);
         sightconeAngle = 0;
+        sightconeRotateSpeed = 0.2;
+        sightcone.setInteractive();
+        explosion.setInteractive();
+        this.physics.add.overlap(sightcone, explosion, updateIsLooking); /////////////
     }
 
     update () {
         if (keys.left.isDown) {
             player.moveLeft(1);
-            sightconeAngle -= 0.2;
+            sightconeAngle -= sightconeRotateSpeed;
         }
 
         if (keys.right.isDown) {
             player.moveRight(1);
-            sightconeAngle += 0.2;
+            sightconeAngle += sightconeRotateSpeed;
         }
 
         if (keys.up.isDown) {
@@ -92,6 +99,31 @@ export default class GameScene extends Phaser.Scene {
         Phaser.Math.RotateAroundDistance(sightcone, player.x, player.y, sightconeAngle, 120);
         const angleDeg = Math.atan2(sightcone.y - player.y, sightcone.x - player.x) * 180 / Math.PI;
         sightcone.angle = angleDeg+270;
-        //Phaser.Math.RotateAround(sightcone, player.center, 0.01);
+
+        // if (sightcone.body.touching.none){
+        //     sightcone.setFillStyle(0xff0000)
+        // }
+
+        // if(Phaser.Geom.Triangle.Contains(sightcone, explosion.x, explosion.y))
+        // {
+        //     isLooking = true;
+        // }
+        // else
+        // {
+        //     isLooking = false;
+        // }
+
+        if (isLooking){
+            sightcone.setFillStyle(0xff0000);
+        }
+        else {
+            sightcone.setFillStyle(0x6666ff);
+        }
+
     }
 };
+
+function updateIsLooking()
+{
+    isLooking = true;
+}
