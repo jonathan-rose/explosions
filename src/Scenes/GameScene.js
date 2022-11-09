@@ -10,8 +10,6 @@ var isLooking;
 var coolometerCount;
 var coolometerMax;
 
-var speed = 50;
-
 export default class GameScene extends Phaser.Scene {
 
     constructor () {
@@ -39,6 +37,7 @@ export default class GameScene extends Phaser.Scene {
             'down': Phaser.Input.Keyboard.KeyCodes.DOWN,
             'left': Phaser.Input.Keyboard.KeyCodes.LEFT,
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
+            'return': Phaser.Input.Keyboard.KeyCodes.SPACE, // Remove on release
         });
 
         graphics = this.add.graphics({ fillStyle: { color: 0x00ffff }});
@@ -50,21 +49,25 @@ export default class GameScene extends Phaser.Scene {
 
     update () {
         if (keys.left.isDown) {
-            player.moveLeft(speed);
+            player.moveLeft();
         }
 
         if (keys.right.isDown) {
-            player.moveRight(speed);
+            player.moveRight();
         }
 
         if (keys.up.isDown) {
-            player.moveUp();
+            player.moveForward();
             isLooking = true; // DELETE ME ONCE isLooking IS DONE
         }
 
         if (keys.down.isDown) {
-            player.moveDown(speed);
+            player.stop();
             isLooking = false; // DELETE ME ONCE isLooking IS DONE
+        }
+
+        if (keys.return.isDown) { // Remove on release
+            player.setLocation(100, 100);
         }
 
         if (isLooking && coolometerCount<coolometerMax){

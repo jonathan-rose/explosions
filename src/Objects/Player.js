@@ -1,4 +1,5 @@
 import 'phaser';
+import GameScene from '../Scenes/GameScene';
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, sprite) {
@@ -10,11 +11,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.setCollideWorldBounds = true;
         this.turnSpeed = 3;
         this.moveSpeed = 500;
-              
+        this.reverseSpeed = this.moveSpeed / 2;
+        this.dragFactor = 0.1 // Lower is faster deceleration
+             
         this.scene.physics.add.existing(this);
         this.scene.add.existing(this);
         this.setGravity(0);
         this.setInteractive();
+
+        this.body.useDamping = true;
+        this.setDrag(this.dragFactor);
     }
 
     setLocation(x, y) {
@@ -30,12 +36,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.angle += this.turnSpeed;
     }
 
-    moveUp(y) {
+    moveForward(y) {
         const vec = this.scene.physics.velocityFromAngle(this.angle, this.moveSpeed);
         this.setVelocity(vec.x, vec.y);
     }
 
-    moveDown(y) {
-        this.setVelocity(0);
+    stop(y) {
+        // this.setVelocity(0);
+        const vec = this.scene.physics.velocityFromAngle(this.angle, this.reverseSpeed);
+        this.setVelocity(-vec.x, -vec.y);
     }
 }
