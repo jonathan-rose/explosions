@@ -23,20 +23,21 @@ export default class GameScene extends Phaser.Scene {
         // @TODO: currently not respecting whether the game sound is enabled
         this.sys.game.globals.music = this.sound.add(
             'music',
-            {volume: 0.5,
+            {volume: 0.0, //Temporarily disabled music
              loop: true }
         );
         this.sys.game.globals.music.play();
 
         this.score = new Score(this);
 
-        player = new Player(this, 50, 50, 'player');
+        player = new Player(this, 100, 100, 'player');
 
         keys = this.input.keyboard.addKeys({
             'up': Phaser.Input.Keyboard.KeyCodes.UP,
             'down': Phaser.Input.Keyboard.KeyCodes.DOWN,
             'left': Phaser.Input.Keyboard.KeyCodes.LEFT,
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
+            'return': Phaser.Input.Keyboard.KeyCodes.SPACE, // Remove on release
         });
 
         graphics = this.add.graphics({ fillStyle: { color: 0x00ffff }});
@@ -48,21 +49,25 @@ export default class GameScene extends Phaser.Scene {
 
     update () {
         if (keys.left.isDown) {
-            player.moveLeft(1);
+            player.moveLeft();
         }
 
         if (keys.right.isDown) {
-            player.moveRight(1);
+            player.moveRight();
         }
 
         if (keys.up.isDown) {
-            player.moveUp(1);
+            player.moveForward();
             isLooking = true; // DELETE ME ONCE isLooking IS DONE
         }
 
         if (keys.down.isDown) {
-            player.moveDown(1);
+            player.stop();
             isLooking = false; // DELETE ME ONCE isLooking IS DONE
+        }
+
+        if (keys.return.isDown) { // Remove on release
+            player.setLocation(100, 100);
         }
 
         if (isLooking && coolometerCount<coolometerMax){
