@@ -1,8 +1,10 @@
 import 'phaser';
 import Score from '../Objects/Score';
 import Player from '../Objects/Player';
+import Exploder from '../Objects/Exploder';
 
 var player;
+var exploder;
 var keys;
 var rectangle;
 var graphics;
@@ -32,12 +34,15 @@ export default class GameScene extends Phaser.Scene {
 
         player = new Player(this, 100, 100, 'player');
 
+        exploder = new Exploder(this, 200, 200, 'exploder');
+
         keys = this.input.keyboard.addKeys({
             'up': Phaser.Input.Keyboard.KeyCodes.UP,
             'down': Phaser.Input.Keyboard.KeyCodes.DOWN,
             'left': Phaser.Input.Keyboard.KeyCodes.LEFT,
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
             'return': Phaser.Input.Keyboard.KeyCodes.SPACE, // Remove on release
+            'x': Phaser.Input.Keyboard.KeyCodes.X,
         });
 
         graphics = this.add.graphics({ fillStyle: { color: 0x00ffff }});
@@ -45,9 +50,14 @@ export default class GameScene extends Phaser.Scene {
         isLooking = true;
         coolometerCount = 0;
         coolometerMax = 500;
+
+        window.GameScene=this;
     }
 
     update () {
+
+        graphics.clear();
+
         if (keys.left.isDown) {
             player.moveLeft();
         }
@@ -70,6 +80,10 @@ export default class GameScene extends Phaser.Scene {
             player.setLocation(100, 100);
         }
 
+        if (keys.x.isDown) { // Remove on release
+            exploder.explode(100, 100);
+        }
+
         if (isLooking && coolometerCount<coolometerMax){
             coolometerCount++;
         }
@@ -79,7 +93,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.score.setCombo(coolometerCount);
         this.score.incScore();
-
+        
         graphics.clear();
         rectangle.setSize(100, coolometerCount);
         rectangle.y = 550 - coolometerCount;
