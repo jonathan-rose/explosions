@@ -12,8 +12,6 @@ var isLooking;
 var coolometerCount;
 var coolometerMax;
 var sightcone;
-var sightconeAngle;
-var sightconeRotateSpeed;
 var explosion;
 
 export default class GameScene extends Phaser.Scene {
@@ -35,7 +33,7 @@ export default class GameScene extends Phaser.Scene {
         this.sys.game.globals.music.play();
 
         this.score = new Score(this);
-
+        
         player = new Player(this, 100, 100, 'player');
 
         exploder = new Exploder(this, 200, 200, 'exploder');
@@ -49,19 +47,23 @@ export default class GameScene extends Phaser.Scene {
             'x': Phaser.Input.Keyboard.KeyCodes.X,
         });
 
+        window.GameScene=this;
+
+        this.addCoolometer(); 
+        this.addSightcone();       
+    }
+
+    addCoolometer() {
         graphics = this.add.graphics({ fillStyle: { color: 0x00ffff }});
         rectangle = new Phaser.Geom.Rectangle(650, 50, 100, 500);
         isLooking = true;
         coolometerCount = 0;
         coolometerMax = 500;
+    }
 
+    addSightcone() {
         sightcone = this.add.triangle(200, 200, 0, 148, 148, 148, 74, 0, 0x6666ff);
-        sightconeAngle = 0;
-        sightconeRotateSpeed = 0.2;
-        sightcone.setInteractive();
-        explosion.setInteractive();
-        this.physics.add.overlap(sightcone, explosion, updateIsLooking); /////////////
-        window.GameScene=this;
+        // planning on extending or swapping for sprites
     }
 
     update () {
@@ -78,12 +80,10 @@ export default class GameScene extends Phaser.Scene {
 
         if (keys.up.isDown) {
             player.moveForward();
-            isLooking = true; // DELETE ME ONCE isLooking IS DONE
         }
 
         if (keys.down.isDown) {
             player.stop();
-            isLooking = false; // DELETE ME ONCE isLooking IS DONE
         }
 
         if (keys.return.isDown) { // Remove on release
@@ -104,29 +104,16 @@ export default class GameScene extends Phaser.Scene {
         this.score.setCombo(coolometerCount);
         this.score.incScore();
 
+        // update coolometer
         graphics.clear();
         rectangle.setSize(100, coolometerCount);
         rectangle.y = 550 - coolometerCount;
         graphics.fillRectShape(rectangle);
 
-        sightcone.x = player.x;
-        sightcone.y = player.y;
-        Phaser.Math.RotateAroundDistance(sightcone, player.x, player.y, sightconeAngle, 120);
-        const angleDeg = Math.atan2(sightcone.y - player.y, sightcone.x - player.x) * 180 / Math.PI;
-        sightcone.angle = angleDeg+270;
-
-        // if (sightcone.body.touching.none){
-        //     sightcone.setFillStyle(0xff0000)
-        // }
-
-        // if(Phaser.Geom.Triangle.Contains(sightcone, explosion.x, explosion.y))
-        // {
-        //     isLooking = true;
-        // }
-        // else
-        // {
-        //     isLooking = false;
-        // }
+        //update sightcone
+        sightcone.angle = player.angle -90;
+        sightcone.x = player.x + (120*Math.cos(player.angle * (Math.PI/180)));
+        sightcone.y = player.y + (120*Math.sin(player.angle * (Math.PI/180)));
 
         if (isLooking){
             sightcone.setFillStyle(0xff0000);
@@ -134,6 +121,5 @@ export default class GameScene extends Phaser.Scene {
         else {
             sightcone.setFillStyle(0x6666ff);
         }
-
     }
 };
