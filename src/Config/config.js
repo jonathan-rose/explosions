@@ -9,6 +9,6 @@ export default {
         arcade: {
             gravity: { y: 0 },
             debug: false
-        }
+        },
     }
 };

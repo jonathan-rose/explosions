@@ -25,14 +25,14 @@ export default class GameScene extends Phaser.Scene {
         // @TODO: currently not respecting whether the game sound is enabled
         this.sys.game.globals.music = this.sound.add(
             'music',
-            {volume: 0.5,
+            {volume: 0.0, //Temporarily disabled music
              loop: true }
         );
         this.sys.game.globals.music.play();
 
         this.score = new Score(this);
 
-        player = new Player(this, 50, 50, 'player');
+        player = new Player(this, 100, 100, 'player');
 
         keys = this.input.keyboard.addKeys({
             'up': Phaser.Input.Keyboard.KeyCodes.UP,
@@ -58,7 +58,7 @@ export default class GameScene extends Phaser.Scene {
         }
 
         if (keys.up.isDown) {
-            player.moveUp(speed);
+            player.moveUp();
             isLooking = true; // DELETE ME ONCE isLooking IS DONE
         }
 
