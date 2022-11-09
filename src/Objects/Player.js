@@ -1,6 +1,7 @@
 import 'phaser';
+import GameScene from '../Scenes/GameScene';
 
-export default class Player extends Phaser.GameObjects.Sprite {
+export default class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, sprite) {
         super(scene, x, y, sprite);
         this.scene = scene;
@@ -8,15 +9,18 @@ export default class Player extends Phaser.GameObjects.Sprite {
         this.y = y;
         this.sprite = sprite;
         this.setCollideWorldBounds = true;
-
-        console.log(this);
-        
-        //setInteractive can have a hitarea specified as an argument.
-        //update this with the geometry of the sprite.
-        this.setInteractive();
-        
-        // this.scene.physics.add.existing(this);
+        this.turnSpeed = 3;
+        this.moveSpeed = 500;
+        this.reverseSpeed = this.moveSpeed / 3;
+        this.dragFactor = 0.1 // Lower is faster deceleration
+             
+        this.scene.physics.add.existing(this);
         this.scene.add.existing(this);
+        this.setGravity(0);
+        this.setInteractive();
+
+        this.body.useDamping = true;
+        this.setDrag(this.dragFactor);
     }
 
     setLocation(x, y) {
@@ -25,18 +29,21 @@ export default class Player extends Phaser.GameObjects.Sprite {
     }
 
     moveLeft(x) {
-        this.x = this.x - x;
+        this.angle -= this.turnSpeed;
     }
 
     moveRight(x) {
-        this.x = this.x + x;
+        this.angle += this.turnSpeed;
     }
 
-    moveUp(y) {
-        this.y = this.y - y;
+    moveForward(y) {
+        const vec = this.scene.physics.velocityFromAngle(this.angle, this.moveSpeed);
+        this.setVelocity(vec.x, vec.y);
     }
 
-    moveDown(y) {
-        this.y = this.y + y;
+    stop(y) {
+        // this.setVelocity(0);
+        const vec = this.scene.physics.velocityFromAngle(this.angle, this.reverseSpeed);
+        this.setVelocity(-vec.x, -vec.y);
     }
 }

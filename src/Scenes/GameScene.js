@@ -1,8 +1,10 @@
 import 'phaser';
 import Score from '../Objects/Score';
 import Player from '../Objects/Player';
+import Exploder from '../Objects/Exploder';
 
 var player;
+var exploder;
 var keys;
 var rectangle;
 var graphics;
@@ -23,7 +25,6 @@ export default class GameScene extends Phaser.Scene {
     create () {
         this.add.image(400, 300, 'sky');
         this.add.image(700, 300, 'coolometer');
-        explosion = this.add.image(400, 300, 'logo');
 
         // @TODO: currently not respecting whether the game sound is enabled
         this.sys.game.globals.music = this.sound.add(
@@ -35,13 +36,17 @@ export default class GameScene extends Phaser.Scene {
 
         this.score = new Score(this);
 
-        player = new Player(this, 50, 50, 'player');
+        player = new Player(this, 100, 100, 'player');
+
+        exploder = new Exploder(this, 200, 200, 'exploder');
 
         keys = this.input.keyboard.addKeys({
             'up': Phaser.Input.Keyboard.KeyCodes.UP,
             'down': Phaser.Input.Keyboard.KeyCodes.DOWN,
             'left': Phaser.Input.Keyboard.KeyCodes.LEFT,
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
+            'return': Phaser.Input.Keyboard.KeyCodes.SPACE, // Remove on release
+            'x': Phaser.Input.Keyboard.KeyCodes.X,
         });
 
         graphics = this.add.graphics({ fillStyle: { color: 0x00ffff }});
@@ -56,27 +61,37 @@ export default class GameScene extends Phaser.Scene {
         sightcone.setInteractive();
         explosion.setInteractive();
         this.physics.add.overlap(sightcone, explosion, updateIsLooking); /////////////
+        window.GameScene=this;
     }
 
     update () {
+
+        graphics.clear();
+
         if (keys.left.isDown) {
-            player.moveLeft(1);
-            sightconeAngle -= sightconeRotateSpeed;
+            player.moveLeft();
         }
 
         if (keys.right.isDown) {
-            player.moveRight(1);
-            sightconeAngle += sightconeRotateSpeed;
+            player.moveRight();
         }
 
         if (keys.up.isDown) {
-            player.moveUp(1);
+            player.moveForward();
             isLooking = true; // DELETE ME ONCE isLooking IS DONE
         }
 
         if (keys.down.isDown) {
-            player.moveDown(1);
+            player.stop();
             isLooking = false; // DELETE ME ONCE isLooking IS DONE
+        }
+
+        if (keys.return.isDown) { // Remove on release
+            player.setLocation(100, 100);
+        }
+
+        if (keys.x.isDown) { // Remove on release
+            exploder.explode(100, 100);
         }
 
         if (isLooking && coolometerCount<coolometerMax){
@@ -122,8 +137,3 @@ export default class GameScene extends Phaser.Scene {
 
     }
 };
-
-function updateIsLooking()
-{
-    isLooking = true;
-}
