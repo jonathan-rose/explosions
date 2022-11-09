@@ -7,6 +7,10 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
         this.x = x;
         this.y = y;
         this.sprite = sprite;
+
+        this.lineStyle = 1;
+        this.color = 0xffff00;
+        this.alpha = 1;
              
         this.scene.physics.add.existing(this);
         this.scene.add.existing(this);
@@ -15,7 +19,8 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
 
         this.graphics = new Phaser.GameObjects.Graphics(this.scene);
         this.graphics.clear();
-        this.graphics.defaultFillColor = 0xFF0000;
+        this.graphics.defaultFillColor = this.color;
+        this.graphics.lineStyle(this.lineStyle, this.color, this.alpha);
         this.scene.add.existing(this.graphics);
     }
 
@@ -26,6 +31,6 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
 
     explode(strength) {
         var radius = new Phaser.Geom.Circle(this.x, this.y, strength);
-        this.graphics.fillCircleShape(radius);
+        this.graphics.strokeCircleShape(radius);
     }
 }
