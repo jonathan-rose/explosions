@@ -81,7 +81,7 @@ export default class GameScene extends Phaser.Scene {
         }
 
         if (keys.x.isDown) { // Remove on release
-            exploder.explode(100);
+            exploder.explode(100, 100);
         }
 
         if (isLooking && coolometerCount<coolometerMax){

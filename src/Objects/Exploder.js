@@ -29,8 +29,12 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
         this.y = y;
     }
 
-    explode(strength) {
-        var radius = new Phaser.Geom.Circle(this.x, this.y, strength);
-        this.graphics.strokeCircleShape(radius);
+    explode(strength, duration) {
+        for (let i = 0; i <= duration; i++) {
+            // Strength should be the size of the largest, final circle
+            // Durtaion should be the time the explosion lasts
+            var radius = new Phaser.Geom.Circle(this.x, this.y, strength / i);
+            this.graphics.strokeCircleShape(radius);
+        }        
     }
 }
