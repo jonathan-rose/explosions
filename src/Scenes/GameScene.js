@@ -81,10 +81,7 @@ export default class GameScene extends Phaser.Scene {
         }
 
         if (keys.x.isDown) { // Remove on release
-            var radius = exploder.explode(100);
-            graphics.clear();
-            graphics.fillCircleShape(radius); 
-            // How the holy moley do I get this to happen from inside the Exploder class?
+            exploder.explode(100);
         }
 
         if (isLooking && coolometerCount<coolometerMax){
@@ -97,9 +94,9 @@ export default class GameScene extends Phaser.Scene {
         this.score.setCombo(coolometerCount);
         this.score.incScore();
         
+        graphics.clear();
         rectangle.setSize(100, coolometerCount);
         rectangle.y = 550 - coolometerCount;
         graphics.fillRectShape(rectangle);
-
     }
 };

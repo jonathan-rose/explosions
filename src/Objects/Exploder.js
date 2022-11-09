@@ -12,6 +12,11 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
         this.scene.add.existing(this);
         this.setGravity(0);
         this.setInteractive();
+
+        this.graphics = new Phaser.GameObjects.Graphics(this.scene);
+        this.graphics.clear();
+        this.graphics.defaultFillColor = 0xFF0000;
+        this.scene.add.existing(this.graphics);
     }
 
     setLocation(x, y) {
@@ -20,7 +25,7 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
     }
 
     explode(strength) {
-        this.radius = new Phaser.Geom.Circle(this.x, this.y, strength);
-        return this.radius;
+        var radius = new Phaser.Geom.Circle(this.x, this.y, strength);
+        this.graphics.fillCircleShape(radius);
     }
 }
