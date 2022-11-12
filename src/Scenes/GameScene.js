@@ -50,7 +50,16 @@ export default class GameScene extends Phaser.Scene {
         window.GameScene=this;
 
         this.addCoolometer(); 
-        this.addSightcone();       
+        this.addSightcone();
+
+        // var r1 = this.add.circle(400, 400, 10, 0x6666ff);
+        
+        // this.tweens.add({
+        //     targets: r1, 
+        //     scale: 10,
+        //     yoyo: false,
+        //     repeat: 0,   
+        // });
     }
 
     addCoolometer() {
@@ -91,7 +100,7 @@ export default class GameScene extends Phaser.Scene {
         }
 
         if (keys.x.isDown) { // Remove on release
-            exploder.explode(100, 100);
+            exploder.explode(20, 100);
         }
 
         if (isLooking && coolometerCount<coolometerMax){
