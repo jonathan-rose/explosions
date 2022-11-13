@@ -55,7 +55,7 @@ export default class GameScene extends Phaser.Scene {
 
         blastTimer = this.time.addEvent({
             delay: blastWaveDelay,
-            callback: function () { this.createExplosions(blastWaveCount) },
+            callback: function () { exploder.createExplosions(blastWaveCount) },
             callbackScope: this,
             loop: true
         });
@@ -101,16 +101,6 @@ export default class GameScene extends Phaser.Scene {
     addSightcone() {
         sightcone = this.add.triangle(200, 200, 0, 148, 148, 148, 74, 0, 0x6666ff);
         // planning on extending or swapping for sprites
-    }
-
-    createExplosions(count = 1) { // These need to be tweaked along with the explode() function
-        for (var i = 0; i <= count; i++) {
-            var randX = Phaser.Math.Between(0, this.cameras.main.width);
-            var randY = Phaser.Math.Between(0, this.cameras.main.height);
-            var randRadius = Phaser.Math.FloatBetween(20, 100);
-            var randDuration = Phaser.Math.FloatBetween(0.25, 1);
-            exploder.explode(randX, randY, randRadius, randDuration);
-        }
     }
 
     update () {

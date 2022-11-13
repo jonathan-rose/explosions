@@ -46,4 +46,14 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
             onComplete: function () { r.destroy(), warning.destroy() },
         });
     }
+
+    createExplosions(count = 1) { // These need to be tweaked along with the explode() function
+        for (var i = 0; i <= count; i++) {
+            var randX = Phaser.Math.Between(0, this.scene.cameras.main.width);
+            var randY = Phaser.Math.Between(0, this.scene.cameras.main.height);
+            var randRadius = Phaser.Math.FloatBetween(20, 100);
+            var randDuration = Phaser.Math.FloatBetween(0.25, 1);
+            this.explode(randX, randY, randRadius, randDuration);
+        }
+    }
 }
