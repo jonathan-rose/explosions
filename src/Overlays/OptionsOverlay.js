@@ -4,9 +4,6 @@ export default class OptionsOverlay extends Overlay {
     constructor(scene) {
         super(scene);
 
-        let {width, height} = this.scene.scale.gameSize;
-        this.centerX = width / 2;
-
         this.yOffset = 500;
 
         this.title = this.scene.add.text(

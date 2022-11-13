@@ -6,6 +6,9 @@ export default class Overlay extends Phaser.GameObjects.Container {
         this.scene = scene;
 
         let {width, height} = scene.sys.game.scale.gameSize;
+        this.width = width;
+        this.height = height;
+        this.centerX = width / 2;
         this.x = 0;
         this.y = 0;
 

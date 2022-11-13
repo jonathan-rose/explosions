@@ -3,10 +3,6 @@ import Overlay from './Overlay';
 export default class PauseOverlay extends Overlay {
     constructor(scene) {
         super(scene);
-        this.name = 'pause';
-
-        let {width, height} = scene.sys.game.scale.gameSize;
-        this.centerX = width / 2;
 
         this.title = this.scene.add.text(
             this.centerX,
