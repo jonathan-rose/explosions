@@ -3,8 +3,10 @@ import Score from '../Objects/Score';
 import Player from '../Objects/Player';
 import Exploder from '../Objects/Exploder';
 import OverlayManager from '../Overlays/OverlayManager';
-import PauseOverlay from '../Overlays/PauseOverlay';
+import AchievementsOverlay from '../Overlays/AchievementsOverlay';
 import CreditsOverlay from '../Overlays/CreditsOverlay';
+import OptionsOverlay from '../Overlays/OptionsOverlay';
+import PauseOverlay from '../Overlays/PauseOverlay';
 
 var player;
 var exploder;
@@ -64,7 +66,7 @@ export default class GameScene extends Phaser.Scene {
         this.addCoolometer();
         this.addSightcone();
         this.initOverlays();
-        
+
     }
 
     addCoolometer() {
@@ -80,9 +82,10 @@ export default class GameScene extends Phaser.Scene {
 
     initOverlays() {
         let overlayMap = {
-            'pause': new PauseOverlay(this),
-            'credits': new CreditsOverlay(this)
-            // @TODO: register the other overlays here
+            'achievements': new AchievementsOverlay(this),
+            'credits': new CreditsOverlay(this),
+            'options': new OptionsOverlay(this),
+            'pause': new PauseOverlay(this)
         };
         this.overlayManager = new OverlayManager(this, overlayMap);
     }

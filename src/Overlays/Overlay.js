@@ -9,6 +9,9 @@ export default class Overlay extends Phaser.GameObjects.Container {
         this.x = 0;
         this.y = 0;
 
+        // default y-offset for navs, feel free to overwrite
+        this.yOffset = 200;
+
         this.alphaLayer = this.scene.add.rectangle(
             0,
             0,
@@ -40,6 +43,7 @@ export default class Overlay extends Phaser.GameObjects.Container {
         this.visible = false;
     }
 
+    // @TODO: make initial y-offset configurable to allow a single 'back' at the bottom
     initNavs() {
         if (this.navData.length == 0) { return; }
 
@@ -50,7 +54,7 @@ export default class Overlay extends Phaser.GameObjects.Container {
         this.navData.forEach((nd) => {
             let n = this.scene.add.text(
                 this.centerX,
-                200 + (i * 100),
+                this.yOffset + (i * 100),
                 nd.text,
                 {fontSize: '32px',
                  fill: '#FFF'}
@@ -64,7 +68,7 @@ export default class Overlay extends Phaser.GameObjects.Container {
         this.cursorPos = 0;
         this.cursor = this.scene.add.text(
             this.centerX,
-            200,
+            this.yOffset,
             '>>             <<',
             {fontSize: '32px',
              fill: '#FFF'}
@@ -87,12 +91,12 @@ export default class Overlay extends Phaser.GameObjects.Container {
 
     upHandler() {
         this.cursorPos = this.mod((this.cursorPos - 1), this.navs.length);
-        this.cursor.y = 200 + (this.cursorPos * 100);
+        this.cursor.y = this.yOffset + (this.cursorPos * 100);
     }
 
     downHandler() {
         this.cursorPos = this.mod((this.cursorPos + 1), this.navs.length);
-        this.cursor.y = 200 + (this.cursorPos * 100);
+        this.cursor.y = this.yOffset + (this.cursorPos * 100);
     }
 
     navHandler() {

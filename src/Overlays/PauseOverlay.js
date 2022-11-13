@@ -1,4 +1,3 @@
-import 'phaser';
 import Overlay from './Overlay';
 
 export default class PauseOverlay extends Overlay {

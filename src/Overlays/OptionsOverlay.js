@@ -1,6 +1,6 @@
 import Overlay from './Overlay';
 
-export default class CreditsOverlay extends Overlay {
+export default class OptionsOverlay extends Overlay {
     constructor(scene) {
         super(scene);
 
@@ -12,13 +12,13 @@ export default class CreditsOverlay extends Overlay {
         this.title = this.scene.add.text(
             this.centerX,
             100,
-            'Credits',
+            'Options',
             {fontSize: '32px',
              fill: '#FFF'}
         ).setOrigin(0.5);
         this.add(this.title);
 
-        // @TODO: add credits
+        // @TODO: add options
 
         this.navData = [
             {text: 'back',
