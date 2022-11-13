@@ -56,9 +56,10 @@ export default class GameScene extends Phaser.Scene {
         
         // this.tweens.add({
         //     targets: r1, 
-        //     scale: 10,
+        //     scale: 5,
         //     yoyo: false,
-        //     repeat: 0,   
+        //     repeat: 0,
+        //     completeDelay: 2000,
         // });
     }
 
@@ -100,7 +101,7 @@ export default class GameScene extends Phaser.Scene {
         }
 
         if (keys.x.isDown) { // Remove on release
-            exploder.explode(20, 100);
+            exploder.explode(1.5, 0.5);
         }
 
         if (isLooking && coolometerCount<coolometerMax){
