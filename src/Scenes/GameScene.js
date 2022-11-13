@@ -50,6 +50,8 @@ export default class GameScene extends Phaser.Scene {
 
         exploder = new Exploder(this, 200, 200, 'exploder');
 
+        exploder.startWave();
+
         keys = this.input.keyboard.addKeys({
             'up': Phaser.Input.Keyboard.KeyCodes.UP,
             'down': Phaser.Input.Keyboard.KeyCodes.DOWN,
@@ -117,6 +119,10 @@ export default class GameScene extends Phaser.Scene {
 
         if (keys.return.isDown) { // Remove on release
             player.setLocation(100, 100);
+        }
+
+        if (keys.x.isDown) { // Remove on release
+            exploder.stopWave();
         }
 
         if (isLooking && coolometerCount<coolometerMax){

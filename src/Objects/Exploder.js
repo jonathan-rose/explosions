@@ -22,21 +22,26 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
         this.graphics.lineStyle(this.lineStyle, this.color, this.alpha);
         this.scene.add.existing(this.graphics);
 
-        var blastTimer;
-        var blastWaveDelay = Phaser.Math.Between(800, 1200); // ms
-        var blastWaveCount = Phaser.Math.Between(3, 5);
-
-        blastTimer = this.scene.time.addEvent({
-            delay: blastWaveDelay,
-            callback: function () { this.createExplosions(blastWaveCount) },
-            callbackScope: this,
-            loop: true
-        });
+        this.blastWaveDelay = Phaser.Math.Between(800, 1200); // ms
+        this.blastWaveCount = Phaser.Math.Between(3, 5);
     }
 
     setLocation(x, y) {
         this.x = x;
         this.y = y;
+    }
+
+    startWave () {
+        this.blastTimer = this.scene.time.addEvent({
+            delay: this.blastWaveDelay,
+            callback: function () { this.createExplosions(this.blastWaveCount) },
+            callbackScope: this,
+            loop: true
+        });
+    }
+
+    stopWave () {
+        this.blastTimer.destroy();
     }
 
     explode(x = this.x, y = this.y, radius = 1, duration = 0.25, delay = 2) {
