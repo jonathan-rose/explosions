@@ -50,6 +50,8 @@ export default class GameScene extends Phaser.Scene {
 
         exploder = new Exploder(this, 200, 200, 'exploder');
 
+        exploder.startWave();
+
         keys = this.input.keyboard.addKeys({
             'up': Phaser.Input.Keyboard.KeyCodes.UP,
             'down': Phaser.Input.Keyboard.KeyCodes.DOWN,
@@ -93,16 +95,6 @@ export default class GameScene extends Phaser.Scene {
         // planning on extending or swapping for sprites
     }
 
-    createExplosions(count) {
-        for (var i = 0; i <= count; i++) {
-            var randX = Phaser.Math.Between(0, this.cameras.main.width);
-            var randY = Phaser.Math.Between(0, this.cameras.main.height);
-            var randSrength = Phaser.Math.FloatBetween(0.25, 2);
-            var randDuration = Phaser.Math.FloatBetween(0.25, 1);
-            exploder.explode(randX, randY, randSrength, randDuration);
-        }
-    }
-
     update () {
         // this might be too heavy handed as a pause mechanism
         if (!this.isRunning) { return; }
@@ -130,7 +122,7 @@ export default class GameScene extends Phaser.Scene {
         }
 
         if (keys.x.isDown) { // Remove on release
-            this.createExplosions(5);
+            exploder.stopWave();
         }
 
         if (isLooking && coolometerCount<coolometerMax){
