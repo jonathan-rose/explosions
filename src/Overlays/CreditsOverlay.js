@@ -4,21 +4,36 @@ export default class CreditsOverlay extends Overlay {
     constructor(scene) {
         super(scene);
 
-        let {width, height} = this.scene.scale.gameSize;
-        this.centerX = width / 2;
-
         this.yOffset = 500;
+
+        let styles = {fontSize: '32px', fill: '#FFF'};
 
         this.title = this.scene.add.text(
             this.centerX,
             100,
             'Credits',
-            {fontSize: '32px',
-             fill: '#FFF'}
+            styles
         ).setOrigin(0.5);
         this.add(this.title);
 
-        // @TODO: add credits
+        let credits = [
+            'Programming: Jon',
+            'Programming: Beth',
+            'Programming: Dave',
+            'Music: PJ',
+        ];
+
+        let i = 0;
+        credits.forEach((c) => {
+            let credit = this.scene.add.text(
+                this.centerX,
+                200 + (66 * i),
+                c,
+                styles
+            ).setOrigin(0.5);
+            this.add(credit);
+            i++
+        }, this);
 
         this.navData = [
             {text: 'back',
