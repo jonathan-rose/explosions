@@ -65,12 +65,14 @@ export default class GameScene extends Phaser.Scene {
         // planning on extending or swapping for sprites
     }
 
-    createExplosions() {
-        var randX = Phaser.Math.Between(0, this.cameras.main.width);
-        var randY = Phaser.Math.Between(0, this.cameras.main.height);
-        var randSrength = Phaser.Math.FloatBetween(0.25, 2);
-        var randDuration = Phaser.Math.FloatBetween(0.25, 3);
-        exploder.explode(randX, randY, randSrength, randDuration);
+    createExplosions(count) {
+        for (var i = 0; i <= count; i++) {
+            var randX = Phaser.Math.Between(0, this.cameras.main.width);
+            var randY = Phaser.Math.Between(0, this.cameras.main.height);
+            var randSrength = Phaser.Math.FloatBetween(0.25, 2);
+            var randDuration = Phaser.Math.FloatBetween(0.25, 1);
+            exploder.explode(randX, randY, randSrength, randDuration);
+        }
     }
 
     update () {
@@ -97,7 +99,7 @@ export default class GameScene extends Phaser.Scene {
         }
 
         if (keys.x.isDown) { // Remove on release
-            this.createExplosions();
+            this.createExplosions(5);
         }
 
         if (isLooking && coolometerCount<coolometerMax){
