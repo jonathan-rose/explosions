@@ -8,9 +8,6 @@ import CreditsOverlay from '../Overlays/CreditsOverlay';
 
 var player;
 var exploder;
-var blastTimer;
-var blastWaveDelay = Phaser.Math.Between(800, 1200); // ms
-var blastWaveCount = Phaser.Math.Between(3, 5);
 var keys;
 var rectangle;
 var graphics;
@@ -53,12 +50,12 @@ export default class GameScene extends Phaser.Scene {
 
         exploder = new Exploder(this, 200, 200, 'exploder');
 
-        blastTimer = this.time.addEvent({
-            delay: blastWaveDelay,
-            callback: function () { exploder.createExplosions(blastWaveCount) },
-            callbackScope: this,
-            loop: true
-        });
+        // blastTimer = this.time.addEvent({
+        //     delay: blastWaveDelay,
+        //     callback: function () { exploder.createExplosions(blastWaveCount) },
+        //     callbackScope: this,
+        //     loop: true
+        // });
 
         keys = this.input.keyboard.addKeys({
             'up': Phaser.Input.Keyboard.KeyCodes.UP,
