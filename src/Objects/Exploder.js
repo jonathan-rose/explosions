@@ -1,12 +1,11 @@
 import 'phaser';
 
 export default class Exploder extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, sprite) {
-        super(scene, x, y, sprite);
+    constructor(scene, x, y) {
+        super(scene, x, y);
         this.scene = scene;
         this.x = x;
         this.y = y;
-        this.sprite = sprite;
 
         this.lineStyle = 1;
         this.color = 0xffff00;
@@ -31,9 +30,9 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
 
     explode(x = this.x, y = this.y, radius = 1, duration = 0.25, delay = 2) {
         
-        var startingRadius = 10;
+        var startingRadius = 0;
 
-        var warning = this.scene.add.circle(x, y, radius, 0xFA8888, 0.25);
+        var warning = this.scene.add.ellipse(x, y, radius * 2, radius * 2, 0xFA8888, 0.25);
 
         var r = this.scene.add.circle(x, y, startingRadius, 0x6666ff); // Should the starting radius be an argument?
         
