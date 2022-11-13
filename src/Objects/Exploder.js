@@ -29,14 +29,15 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
         this.y = y;
     }
 
-    explode(strength, duration) {
-        var r = this.scene.add.circle(this.x, this.y, 10, 0x6666ff); // Should the starting radius be an argument?
+    explode(x = this.x, y = this.y, strength = 1, duration = 0.25, delay = 0) {
+        var r = this.scene.add.circle(x, y, 10, 0x6666ff); // Should the starting radius be an argument?
         
         this.scene.tweens.add({
 
             targets: r,
+            delay: delay * 1000,
             scale: strength * 10, // Improve these
-            duration: duration * 500,
+            duration: duration * 1000,
             onComplete: function () { r.destroy() },
         });
     }

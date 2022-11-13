@@ -12,7 +12,6 @@ var isLooking;
 var coolometerCount;
 var coolometerMax;
 var sightcone;
-var explosion;
 
 export default class GameScene extends Phaser.Scene {
 
@@ -44,23 +43,13 @@ export default class GameScene extends Phaser.Scene {
             'left': Phaser.Input.Keyboard.KeyCodes.LEFT,
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
             'return': Phaser.Input.Keyboard.KeyCodes.SPACE, // Remove on release
-            'x': Phaser.Input.Keyboard.KeyCodes.X,
+            'x': Phaser.Input.Keyboard.KeyCodes.X, // Remove on release
         });
 
         window.GameScene=this;
 
         this.addCoolometer(); 
         this.addSightcone();
-
-        // var r1 = this.add.circle(400, 400, 10, 0x6666ff);
-        
-        // this.tweens.add({
-        //     targets: r1, 
-        //     scale: 5,
-        //     yoyo: false,
-        //     repeat: 0,
-        //     completeDelay: 2000,
-        // });
     }
 
     addCoolometer() {
@@ -76,8 +65,15 @@ export default class GameScene extends Phaser.Scene {
         // planning on extending or swapping for sprites
     }
 
-    update () {
+    createExplosions() {
+        var randX = Phaser.Math.Between(0, this.cameras.main.width);
+        var randY = Phaser.Math.Between(0, this.cameras.main.height);
+        var randSrength = Phaser.Math.FloatBetween(0.25, 2);
+        var randDuration = Phaser.Math.FloatBetween(0.25, 3);
+        exploder.explode(randX, randY, randSrength, randDuration);
+    }
 
+    update () {
         graphics.clear();
 
         if (keys.left.isDown) {
@@ -101,7 +97,7 @@ export default class GameScene extends Phaser.Scene {
         }
 
         if (keys.x.isDown) { // Remove on release
-            exploder.explode(1.5, 0.5);
+            this.createExplosions();
         }
 
         if (isLooking && coolometerCount<coolometerMax){
