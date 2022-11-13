@@ -8,6 +8,9 @@ import CreditsOverlay from '../Overlays/CreditsOverlay';
 
 var player;
 var exploder;
+var blastTimer;
+var blastWaveDelay = Phaser.Math.Between(800, 1200); // ms
+var blastWaveCount = Phaser.Math.Between(3, 5);
 var keys;
 var rectangle;
 var graphics;
@@ -49,6 +52,13 @@ export default class GameScene extends Phaser.Scene {
         player = new Player(this, 100, 100, 'player');
 
         exploder = new Exploder(this, 200, 200, 'exploder');
+
+        blastTimer = this.time.addEvent({
+            delay: blastWaveDelay,
+            callback: function () { this.createExplosions(blastWaveCount) },
+            callbackScope: this,
+            loop: true
+        });
 
         keys = this.input.keyboard.addKeys({
             'up': Phaser.Input.Keyboard.KeyCodes.UP,
@@ -93,13 +103,13 @@ export default class GameScene extends Phaser.Scene {
         // planning on extending or swapping for sprites
     }
 
-    createExplosions(count) {
+    createExplosions(count = 1) { // These need to be tweaked along with the explode() function
         for (var i = 0; i <= count; i++) {
             var randX = Phaser.Math.Between(0, this.cameras.main.width);
             var randY = Phaser.Math.Between(0, this.cameras.main.height);
-            var randSrength = Phaser.Math.FloatBetween(0.25, 2);
+            var randRadius = Phaser.Math.FloatBetween(20, 100);
             var randDuration = Phaser.Math.FloatBetween(0.25, 1);
-            exploder.explode(randX, randY, randSrength, randDuration);
+            exploder.explode(randX, randY, randRadius, randDuration);
         }
     }
 
