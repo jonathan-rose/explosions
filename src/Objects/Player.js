@@ -12,8 +12,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.turnSpeed = 3;
         this.moveSpeed = 500;
         this.reverseSpeed = this.moveSpeed / 3;
-        this.dragFactor = 0.1 // Lower is faster deceleration
-             
+        this.dragFactor = 0.1; // Lower is faster deceleration
+
         this.scene.physics.add.existing(this);
         this.scene.add.existing(this);
         this.setGravity(0);
