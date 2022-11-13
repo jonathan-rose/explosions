@@ -36,6 +36,11 @@ export default class OverlayManager {
 
         if (this.overlayStack.length > 0) {
             this.overlayStack[this.overlayStack.length - 1].enable();
+        } else {
+            // not in love with controlling this from here :/
+            this.scene.unmuffleMusic();
+            this.scene.isRunning = true;
+            this.scene.physics.resume();
         }
     }
 
