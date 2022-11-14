@@ -9,8 +9,10 @@ export default class Score extends Phaser.GameObjects.Container {
         this.x = scene.cameras.main.worldView.x + scene.cameras.main.width / 2;
         this.y = 100;
 
-        this.currentScore = 0;
-        this.currentCombo = 1;
+        this.startingScore = 0;
+        this.startingCombo = 1;
+        this.currentScore = this.startingScore;
+        this.currentCombo = this.startingCombo;
 
         this.addScoreTexts();
 
@@ -76,6 +78,7 @@ export default class Score extends Phaser.GameObjects.Container {
 
     // combo altering functions
     setCombo(n) {this.currentCombo = n;}
+    resetCombo() {this.currentCombo = this.startingCombo;}
     incCombo() {this.currentCombo++;}
     incComboBy(n) {this.currentCombo += n;}
 
@@ -85,6 +88,11 @@ export default class Score extends Phaser.GameObjects.Container {
         this.scoreTexts.forEach(s => {
             s.setText(this.sanitize(this.currentScore));
         });
+    }
+
+    // reset score
+    resetScore() {
+        this.currentScore = this.startingScore;
     }
 
     // increment the score by the current combo value

@@ -20,7 +20,7 @@ export default class CreditsOverlay extends Overlay {
             'Programming: Jon',
             'Programming: Beth',
             'Programming: Dave',
-            'Music: PJ',
+            'Music: PJ'
         ];
 
         let i = 0;

@@ -111,6 +111,10 @@ export default class Overlay extends Phaser.GameObjects.Container {
         case 'OPEN_OVERLAY':
             this.scene.overlayManager.openTarget(target);
             break;
+        case 'RESTART_GAME':
+            this.scene.overlayManager.disableAll();
+            this.scene.restartGame();
+            break;
         }
     }
 }
