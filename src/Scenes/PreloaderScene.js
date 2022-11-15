@@ -16,7 +16,7 @@ export default class PreloaderScene extends Phaser.Scene {
 
         var width = this.cameras.main.width;
         var height = this.cameras.main.height;
-        
+
         var loadingText = this.make.text({
             x: width / 2,
             y: height / 2 - 50,
@@ -74,6 +74,10 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.image('player', 'assets/img/player.png');
         this.load.image('exploder', 'assets/img/exploder.png');
         this.load.image('coolometer', 'assets/img/coolometerBackground.png');
+
+        this.load.image('achievement_highscore1', 'assets/img/achievement_10-6.png');
+        this.load.image('achievement_highscore2', 'assets/img/achievement_10-9.png');
+        this.load.image('achievement_highscore3', 'assets/img/achievement_10-12.png');
 
         this.load.audio('music', ['assets/audio/dont_look_back.mp3']);
         this.load.audio('musicMuffled', ['assets/audio/dont_look_back-muffled.mp3']);

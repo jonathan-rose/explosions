@@ -27,18 +27,30 @@ export default class AchievementsOverlay extends Overlay {
         for (const [name, aData] of Object.entries(achievements)) {
             let x = initialXOffset + ((i % 3) * xOffset);
             let y = initialYOffset + (Math.floor(i / 3) * yOffset);
-            let color = 0xABABAB;
-            if (aData.unlocked) { color = 0x00FFFF; }
-            // @TODO: this should be an alpha layer over an image
-            let achievement = this.scene.add.rectangle(
+
+            let image = this.scene.add.image(x, y, aData.image);
+
+            let color = 0x555555;
+            if (aData.unlocked) {
+                color = 0x00FFFF;
+            }
+            let alphaLayer = this.scene.add.rectangle(
                 x,
                 y,
                 achievementSize,
                 achievementSize,
                 color,
-                1
+                0.7
             ).setOrigin(0.5);
-            this.add(achievement);
+
+            // if the achievement is unlocked draw the image on top of the rectangle
+            if (aData.unlocked) {
+                this.add(alphaLayer);
+                this.add(image);
+            } else {
+                this.add(image);
+                this.add(alphaLayer);
+            }
             i++;
         };
 
