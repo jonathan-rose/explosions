@@ -20,7 +20,7 @@ export default class Overlay extends Phaser.GameObjects.Container {
             0,
             width,
             height,
-            '#000',
+            0,
             0.7
         ).setOrigin(0);
 
