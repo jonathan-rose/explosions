@@ -20,13 +20,10 @@ export default class OverlayManager {
 
     }
 
-    enablePause() {
-        this.overlayMap['pause'].enable();
-        this.overlayStack.push(this.overlayMap['pause']);
-    }
-
     openTarget(target) {
-        this.overlayStack[this.overlayStack.length - 1].disable();
+        if (this.overlayStack.length > 0) {
+            this.overlayStack[this.overlayStack.length - 1].disable();
+        }
         this.overlayMap[target].enable();
         this.overlayStack.push(this.overlayMap[target]);
     }
@@ -36,7 +33,19 @@ export default class OverlayManager {
 
         if (this.overlayStack.length > 0) {
             this.overlayStack[this.overlayStack.length - 1].enable();
+        } else {
+            this.scene.unpauseGame();
         }
+    }
+
+    disableAll() {
+        this.overlayStack.forEach((o) => {
+            o.disable();
+        });
+        this.overlayStack = [];
+        this.scene.unpauseGame();
+
+
     }
 
     upHandler() {
