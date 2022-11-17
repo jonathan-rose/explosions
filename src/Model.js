@@ -20,11 +20,11 @@ export default class Model {
             highScore3: {description: 'Get a score of 10^12',
                          unlocked: false,
                          image: 'achievement_highscore3'},
-            highScore4: {description: 'Get a score of 10^6',
+            maxCool: {description: 'Max out the Coolometer',
                          unlocked: false},
-            highScore5: {description: 'Get a score of 10^9',
+            stayCool: {description: 'Stay at max cool for 30 seconds',
                          unlocked: true},
-            highScore6: {description: 'Get a score of 10^12',
+            blindFaith: {description: 'Keep your eyes closed for 10 seconds',
                          unlocked: false}
         };
     }
