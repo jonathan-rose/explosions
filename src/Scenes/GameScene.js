@@ -28,7 +28,7 @@ export default class GameScene extends Phaser.Scene {
     create () {
         this.isRunning = true;
 
-        this.add.image(400, 300, 'sky');
+        this.add.image(400, 300, 'sky').setDepth(-100);
         this.add.image(700, 300, 'coolometer');
 
         // @TODO: currently not respecting whether the game sound is enabled
@@ -69,7 +69,6 @@ export default class GameScene extends Phaser.Scene {
         this.addCoolometer();
         this.addSightcone();
         this.initOverlays();
-
     }
 
     addCoolometer() {
@@ -172,13 +171,17 @@ export default class GameScene extends Phaser.Scene {
     pauseGame() {
         this.isRunning = false;
         this.physics.pause();
+        this.tweens.pauseAll();
         this.muffleMusic();
+        exploder.blastTimer.paused = true;
     }
 
     unpauseGame() {
         this.isRunning = true;
         this.physics.resume();
+        this.tweens.resumeAll();
         this.unmuffleMusic();
+        exploder.blastTimer.paused = false;
     }
 
     // handle pausing/unpausing the game

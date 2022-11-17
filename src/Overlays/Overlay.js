@@ -29,6 +29,7 @@ export default class Overlay extends Phaser.GameObjects.Container {
         // overlays should be off by default
         this.disable();
 
+        this.setDepth(10);
         this.scene.add.existing(this);
 
         // default nav goes back to previous overlay

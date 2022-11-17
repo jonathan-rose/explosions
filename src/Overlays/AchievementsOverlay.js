@@ -1,4 +1,5 @@
 import Overlay from './Overlay';
+import Tooltip from '../Objects/Tooltip';
 
 export default class AchievementsOverlay extends Overlay {
     constructor(scene) {
@@ -24,6 +25,7 @@ export default class AchievementsOverlay extends Overlay {
         let initialYOffset = 180;
         let achievementSize = 100;
         let i = 0;
+        this.achievements = [];
         for (const [name, aData] of Object.entries(achievements)) {
             let x = initialXOffset + ((i % 3) * xOffset);
             let y = initialYOffset + (Math.floor(i / 3) * yOffset);
@@ -51,8 +53,29 @@ export default class AchievementsOverlay extends Overlay {
                 this.add(image);
                 this.add(alphaLayer);
             }
+
+            this.achievements.push({
+                alphaLayer: alphaLayer,
+                image: image,
+                description: aData.description
+            });
+
             i++;
         };
+
+        // tooltips have to be added after to stay on top of alphaLayers
+        // (setDepth() doesn't seem to fix this)
+        this.achievements.forEach((a) => {
+            let t = new Tooltip(this.scene, a.description);
+            t.visible = false;
+            t.setDepth(2);
+            this.add(t);
+            a.alphaLayer.setInteractive();
+            a.alphaLayer.on('pointerover', () => { t.visible = true; });
+            a.alphaLayer.on('pointerout', () => { t.visible = false; });
+            a.alphaLayer.on('pointermove', (p) => { t.setPos(p.position); });
+
+        }, this);
 
         this.navData = [
             {text: 'back',
