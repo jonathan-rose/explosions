@@ -6,7 +6,6 @@ import OverlayManager from '../Overlays/OverlayManager';
 import AchievementsOverlay from '../Overlays/AchievementsOverlay';
 import CreditsOverlay from '../Overlays/CreditsOverlay';
 import GameOverOverlay from '../Overlays/GameOverOverlay';
-import OptionsOverlay from '../Overlays/OptionsOverlay';
 import PauseOverlay from '../Overlays/PauseOverlay';
 
 var player;
@@ -31,7 +30,6 @@ export default class GameScene extends Phaser.Scene {
         this.add.image(400, 300, 'sky').setDepth(-100);
         this.add.image(700, 300, 'coolometer');
 
-        // @TODO: currently not respecting whether the game sound is enabled
         this.sys.game.globals.music = this.sound.add(
             'music',
             {volume: 0.5,
@@ -87,7 +85,6 @@ export default class GameScene extends Phaser.Scene {
             'achievements': new AchievementsOverlay(this),
             'credits': new CreditsOverlay(this),
             'gameOver': new GameOverOverlay(this),
-            'options': new OptionsOverlay(this),
             'pause': new PauseOverlay(this)
         };
         this.overlayManager = new OverlayManager(this, overlayMap);
