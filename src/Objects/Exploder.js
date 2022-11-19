@@ -53,7 +53,6 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
         var r = this.scene.add.circle(x, y, startingRadius, 0x6666ff); // Should the starting radius be an argument?
         
         this.scene.tweens.add({
-
             targets: r,
             delay: delay * 1000,
             radius: radius,

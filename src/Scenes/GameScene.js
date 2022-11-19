@@ -15,6 +15,7 @@ var isLooking;
 var coolometerCount;
 var coolometerMax;
 var sightcone;
+var testCircle;
 
 export default class GameScene extends Phaser.Scene {
 
@@ -50,7 +51,7 @@ export default class GameScene extends Phaser.Scene {
 
         exploder = new Exploder(this, 200, 200, 'exploder');
 
-        exploder.startWave();
+        // exploder.startWave();
 
         keys = this.input.keyboard.addKeys({
             'up': Phaser.Input.Keyboard.KeyCodes.UP,
@@ -61,18 +62,22 @@ export default class GameScene extends Phaser.Scene {
             'x': Phaser.Input.Keyboard.KeyCodes.X, // Remove on release
         });
 
-        window.GameScene=this;
+        // window.GameScene=this; - Is this important? I think I added this and its useless - Jon
 
         this.addCoolometer();
         this.addSightcone();
         this.initOverlays();
-        
+
+        testCircle = this.add.circle(400, 450, 100, 0x6666ff);
+
+        this.physics.add.existing(sightcone);
+        this.physics.add.existing(testCircle);
+        this.physics.add.overlap(sightcone, testCircle);
     }
 
     addCoolometer() {
         graphics = this.add.graphics({ fillStyle: { color: 0x00ffff }});
         rectangle = new Phaser.Geom.Rectangle(650, 50, 100, 500);
-        isLooking = true;
         coolometerCount = 0;
         coolometerMax = 500;
 
@@ -92,7 +97,12 @@ export default class GameScene extends Phaser.Scene {
 
     addSightcone() {
         sightcone = this.add.triangle(200, 200, 0, 148, 148, 148, 74, 0, 0x6666ff);
+
         // planning on extending or swapping for sprites
+
+        // sightcone = new Phaser.Geom.Triangle(0, 148, 148, 148, 74, 0);
+        // var graphics2 = this.add.graphics({ fillStyle: { color: 0x00ffff }});
+        // graphics2.fillTriangleShape(sightcone);
     }
 
     update () {
@@ -152,6 +162,12 @@ export default class GameScene extends Phaser.Scene {
         else {
             sightcone.setFillStyle(0x6666ff);
         }
+
+        isLooking = (this.physics.overlap(sightcone, testCircle));
+    }
+
+    testFunction() {
+        console.log("Hit");
     }
 
     muffleMusic() {
