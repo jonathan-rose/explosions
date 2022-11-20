@@ -16,6 +16,7 @@ var coolometerCount;
 var coolometerMax;
 var sightcone;
 var testCircle;
+var explosionGroup;
 
 export default class GameScene extends Phaser.Scene {
 
@@ -51,7 +52,8 @@ export default class GameScene extends Phaser.Scene {
 
         exploder = new Exploder(this, 200, 200, 'exploder');
 
-        // exploder.startWave();
+        exploder.startWave();
+        explosionGroup = exploder.explosionGroup;
 
         keys = this.input.keyboard.addKeys({
             'up': Phaser.Input.Keyboard.KeyCodes.UP,
@@ -72,7 +74,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.physics.add.existing(sightcone);
         this.physics.add.existing(testCircle);
-        this.physics.add.overlap(sightcone, testCircle);
+        this.physics.add.overlap(sightcone, explosionGroup);
     }
 
     addCoolometer() {
@@ -156,14 +158,14 @@ export default class GameScene extends Phaser.Scene {
         sightcone.x = player.x + (120*Math.cos(player.angle * (Math.PI/180)));
         sightcone.y = player.y + (120*Math.sin(player.angle * (Math.PI/180)));
 
+        isLooking = (this.physics.overlap(sightcone, explosionGroup));
+
         if (isLooking){
             sightcone.setFillStyle(0xff0000);
         }
         else {
             sightcone.setFillStyle(0x6666ff);
         }
-
-        isLooking = (this.physics.overlap(sightcone, testCircle));
     }
 
     testFunction() {
