@@ -11,24 +11,10 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
         this.color = 0xffff00;
         this.alpha = 1;
 
-        // @TODO: these sections don't do anything?
-        // |
-        // V
-        /////////////////////
-        this.scene.physics.add.existing(this);
-        this.scene.add.existing(this);
-        this.setGravity(0);
-        this.setInteractive();
-
-        this.graphics = new Phaser.GameObjects.Graphics(this.scene);
-        this.graphics.clear();
-        this.graphics.defaultFillColor = this.color;
-        this.graphics.lineStyle(this.lineStyle, this.color, this.alpha);
-        this.scene.add.existing(this.graphics);
-        /////////////////////
-
         this.blastWaveDelay = Phaser.Math.Between(800, 1200); // ms
         this.blastWaveCount = Phaser.Math.Between(3, 5);
+
+        this.explosionGroup = this.scene.physics.add.group();
     }
 
     setLocation(x, y) {
@@ -70,6 +56,8 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
                 warning.destroy();
             },
         });
+
+        this.explosionGroup.add(r);
     }
 
     createExplosions(count = 1) { // These need to be tweaked along with the explode() function
