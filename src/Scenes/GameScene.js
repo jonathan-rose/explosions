@@ -3,8 +3,11 @@ import Score from '../Objects/Score';
 import Player from '../Objects/Player';
 import Exploder from '../Objects/Exploder';
 import OverlayManager from '../Overlays/OverlayManager';
-import PauseOverlay from '../Overlays/PauseOverlay';
+import AchievementsOverlay from '../Overlays/AchievementsOverlay';
 import CreditsOverlay from '../Overlays/CreditsOverlay';
+import GameOverOverlay from '../Overlays/GameOverOverlay';
+import OptionsOverlay from '../Overlays/OptionsOverlay';
+import PauseOverlay from '../Overlays/PauseOverlay';
 
 var player;
 var exploder;
@@ -27,7 +30,7 @@ export default class GameScene extends Phaser.Scene {
     create () {
         this.isRunning = true;
 
-        this.add.image(400, 300, 'sky');
+        this.add.image(400, 300, 'sky').setDepth(-100);
         this.add.image(700, 300, 'coolometer');
 
         // @TODO: currently not respecting whether the game sound is enabled
@@ -60,7 +63,7 @@ export default class GameScene extends Phaser.Scene {
             'down': Phaser.Input.Keyboard.KeyCodes.DOWN,
             'left': Phaser.Input.Keyboard.KeyCodes.LEFT,
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
-            'return': Phaser.Input.Keyboard.KeyCodes.SPACE, // Remove on release
+            'space': Phaser.Input.Keyboard.KeyCodes.SPACE, // Remove on release
             'x': Phaser.Input.Keyboard.KeyCodes.X, // Remove on release
         });
 
@@ -75,6 +78,7 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.existing(sightcone);
         this.physics.add.existing(testCircle);
         this.physics.add.overlap(sightcone, explosionGroup);
+
     }
 
     addCoolometer() {
@@ -89,9 +93,11 @@ export default class GameScene extends Phaser.Scene {
 
     initOverlays() {
         let overlayMap = {
-            'pause': new PauseOverlay(this),
-            'credits': new CreditsOverlay(this)
-            // @TODO: register the other overlays here
+            'achievements': new AchievementsOverlay(this),
+            'credits': new CreditsOverlay(this),
+            'gameOver': new GameOverOverlay(this),
+            'options': new OptionsOverlay(this),
+            'pause': new PauseOverlay(this)
         };
         this.overlayManager = new OverlayManager(this, overlayMap);
     }
@@ -129,7 +135,7 @@ export default class GameScene extends Phaser.Scene {
             player.stop();
         }
 
-        if (keys.return.isDown) { // Remove on release
+        if (keys.space.isDown) { // Remove on release
             player.setLocation(100, 100);
         }
 
@@ -182,20 +188,48 @@ export default class GameScene extends Phaser.Scene {
         this.sys.game.globals.musicMuffled.volume = 0;
     }
 
+    pauseGame() {
+        this.isRunning = false;
+        this.physics.pause();
+        this.tweens.pauseAll();
+        this.muffleMusic();
+        exploder.blastTimer.paused = true;
+    }
+
+    unpauseGame() {
+        this.isRunning = true;
+        this.physics.resume();
+        this.tweens.resumeAll();
+        this.unmuffleMusic();
+        exploder.blastTimer.paused = false;
+    }
+
     // handle pausing/unpausing the game
     escHandler(keyEvent) {
         if (this.overlayManager.overlayStack.length == 0) {
-            this.isRunning = false;
-            this.physics.pause();
-            this.overlayManager.enablePause();
-            this.muffleMusic();
+            this.pauseGame();
+            this.overlayManager.openTarget('pause');
         } else {
             this.overlayManager.disableTop();
             if (this.overlayManager.overlayStack.length == 0) {
-                this.unmuffleMusic();
-                this.isRunning = true;
-                this.physics.resume();
+                this.unpauseGame();
             }
         }
+    }
+
+    // the player has died, go to the gameOver overlay
+    endGame() {
+        this.pauseGame();
+        this.overlayManager.openTarget('gameOver');
+    }
+
+    restartGame() {
+        player.setVelocity(0);
+        player.setLocation(100, 100);
+        this.score.resetCombo();
+        this.score.resetScore();
+        coolometerCount = 0;
+
+        // @TODO: add whatever is required to reset explosions
     }
 };
