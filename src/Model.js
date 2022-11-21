@@ -1,18 +1,19 @@
 export default class Model {
     constructor() {
-        this._soundOn = true;
-        this._musicOn = false;
-        this._bgMusicPlaying = false;
+        this._currentScore = 0;
         this._highscore = 0;
         this._achievements = {
             lookedAtExplosion1: {description: 'Look at an explosion :(',
-                                 unlocked: true},
+                                 unlocked: false,
+                                 image: 'achievement_lookedAtExplosion1'},
             lookedAtExplosion2: {description: 'Look at an explosion in the first 2 seconds of a game',
-                                 unlocked: false},
+                                 unlocked: false,
+                                 image: 'achievement_lookedAtExplosion2'},
             distanceWalked: {description: 'Walk 500 miles',
-                             unlocked: false},
+                             unlocked: false,
+                             image: 'achievement_500'},
             highScore1: {description: 'Get a score of 10^6',
-                         unlocked: true,
+                         unlocked: false,
                          image: 'achievement_highscore1'},
             highScore2: {description: 'Get a score of 10^9',
                          unlocked: false,
@@ -21,36 +22,23 @@ export default class Model {
                          unlocked: false,
                          image: 'achievement_highscore3'},
             maxCool: {description: 'Max out the Coolometer',
-                         unlocked: false},
+                      unlocked: false,
+                      image: 'achievement_cool1'},
             stayCool: {description: 'Stay at max cool for 30 seconds',
-                         unlocked: true},
-            blindFaith: {description: 'Keep your eyes closed for 10 seconds',
-                         unlocked: false}
+                       unlocked: false,
+                       image: 'achievement_cool2'},
+            // @NOTE: this achievement is intentionally left blank to annoy people
+            unknown: {description: '?????????',
+                      unlocked: false}
         };
     }
 
-    set musicOn(value) {
-        this._musicOn = value;
+    set currentscore(value) {
+        this._currentscore = value;
     }
 
-    get musicOn() {
-        return this._musicOn;
-    }
-
-    set soundOn(value) {
-        this._soundOn = value;
-    }
-
-    get soundOn() {
-        return this._soundOn;
-    }
-
-    set bgMusicPlaying(value) {
-        this._bgMusicPlaying = value;
-    }
-
-    get bgMusicPlaying() {
-        return this._bgMusicPlaying;
+    get currentscore() {
+        return this._currentscore;
     }
 
     set highscore(value) {

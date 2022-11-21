@@ -74,9 +74,14 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.image('player', 'assets/img/player.png');
         this.load.image('coolometer', 'assets/img/coolometerBackground.png');
 
+        this.load.image('achievement_lookedAtExplosion1', 'assets/img/achievement_eye-1.png');
+        this.load.image('achievement_lookedAtExplosion2', 'assets/img/achievement_eye-2.png');
+        this.load.image('achievement_500', 'assets/img/achievement_500.png');
         this.load.image('achievement_highscore1', 'assets/img/achievement_10-6.png');
         this.load.image('achievement_highscore2', 'assets/img/achievement_10-9.png');
         this.load.image('achievement_highscore3', 'assets/img/achievement_10-12.png');
+        this.load.image('achievement_cool1', 'assets/img/achievement_cool-1.png');
+        this.load.image('achievement_cool2', 'assets/img/achievement_cool-2.png');
 
         this.load.audio('music', ['assets/audio/dont_look_back.mp3']);
         this.load.audio('musicMuffled', ['assets/audio/dont_look_back-muffled.mp3']);

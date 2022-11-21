@@ -1,4 +1,5 @@
 import 'phaser';
+import Utils from '../Utils';
 
 export default class Score extends Phaser.GameObjects.Container {
 
@@ -68,14 +69,6 @@ export default class Score extends Phaser.GameObjects.Container {
         ).setOrigin(0.5);
     }
 
-    // Returns the number in scientific notation if bigger than 10^12
-    sanitize(n) {
-        if (n > 1000000000000) {
-            return n.toExponential(5);
-        }
-        return n;
-    }
-
     // combo altering functions
     setCombo(n) {this.currentCombo = n;}
     resetCombo() {this.currentCombo = this.startingCombo;}
@@ -86,7 +79,7 @@ export default class Score extends Phaser.GameObjects.Container {
     // the score text objects need to be updated to display the new score
     updateScoreTexts() {
         this.scoreTexts.forEach(s => {
-            s.setText(this.sanitize(this.currentScore));
+            s.setText(Utils.sanitize(this.currentScore));
         });
     }
 
