@@ -100,30 +100,40 @@ export default class Score extends Phaser.GameObjects.Container {
         this.updateScoreTexts();
     }
 
-    // turn the shuffling tween on and off
-    toggleShuffle() {
-        this.shuffling = !this.shuffling;
-
-        if (this.shuffling) {
-            this.shuffleTween.resume();
-        } else {
-            this.shuffleTween.restart();
-            this.shuffleTween.pause();
+    // turn the buzzing tween on
+    enableBuzzing() {
+        if (!this.buzzing) {
+            this.buzzing = true;
+            this.buzzTween0.resume();
+            this.buzzTween1.resume();
         }
     }
 
-    // turn the buzzing tween on and off
-    toggleBuzz() {
-        this.buzzing = !this.buzzing;
-
+    // turn the buzzing tween off
+    disableBuzzing() {
         if (this.buzzing) {
-            this.buzzTween0.resume();
-            this.buzzTween1.resume();
-        } else {
+            this.buzzing = false;
             this.buzzTween0.restart();
             this.buzzTween0.pause();
             this.buzzTween1.restart();
             this.buzzTween1.pause();
+        }
+    }
+
+    // turn the shuffling tween on
+    enableShuffling() {
+        if (!this.shuffling) {
+            this.shuffling = true;
+            this.shuffleTween.resume();
+        }
+    }
+
+    // turn the shuffling tween off
+    disableShuffling() {
+        if (this.shuffling) {
+            this.shuffling = false;
+            this.shuffleTween.restart();
+            this.shuffleTween.pause();
         }
     }
 }
