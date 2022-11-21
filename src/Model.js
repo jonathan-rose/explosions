@@ -1,8 +1,6 @@
 export default class Model {
     constructor() {
-        this._soundOn = true;
-        this._musicOn = false;
-        this._bgMusicPlaying = false;
+        this._currentScore = 0;
         this._highscore = 0;
         this._achievements = {
             lookedAtExplosion1: {description: 'Look at an explosion :(',
@@ -35,28 +33,12 @@ export default class Model {
         };
     }
 
-    set musicOn(value) {
-        this._musicOn = value;
+    set currentscore(value) {
+        this._currentscore = value;
     }
 
-    get musicOn() {
-        return this._musicOn;
-    }
-
-    set soundOn(value) {
-        this._soundOn = value;
-    }
-
-    get soundOn() {
-        return this._soundOn;
-    }
-
-    set bgMusicPlaying(value) {
-        this._bgMusicPlaying = value;
-    }
-
-    get bgMusicPlaying() {
-        return this._bgMusicPlaying;
+    get currentscore() {
+        return this._currentscore;
     }
 
     set highscore(value) {

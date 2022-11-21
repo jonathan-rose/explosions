@@ -26,6 +26,7 @@ export default class GameScene extends Phaser.Scene {
 
     create () {
         this.isRunning = true;
+        this.model = this.sys.game.globals.model;
 
         this.add.image(400, 300, 'sky').setDepth(-100);
         this.add.image(700, 300, 'coolometer');
@@ -169,6 +170,7 @@ export default class GameScene extends Phaser.Scene {
         this.isRunning = false;
         this.physics.pause();
         this.tweens.pauseAll();
+        this.overlayManager.unpauseAllCursorTweens();
         this.muffleMusic();
         exploder.blastTimer.paused = true;
     }
@@ -196,8 +198,13 @@ export default class GameScene extends Phaser.Scene {
 
     // the player has died, go to the gameOver overlay
     endGame() {
+        this.model._currentScore = this.score.currentScore;
         this.pauseGame();
         this.overlayManager.openTarget('gameOver');
+        // @TODO: this is a little bit icky, ideally it would be nice
+        // if overlays had onOpen and onClose methods they could
+        // override to do stuff like this. Too much work for now.
+        this.overlayManager.overlayMap['gameOver'].updateScore();
     }
 
     restartGame() {
