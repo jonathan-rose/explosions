@@ -7,6 +7,7 @@ import AchievementsOverlay from '../Overlays/AchievementsOverlay';
 import CreditsOverlay from '../Overlays/CreditsOverlay';
 import GameOverOverlay from '../Overlays/GameOverOverlay';
 import PauseOverlay from '../Overlays/PauseOverlay';
+import TitleOverlay from '../Overlays/TitleOverlay';
 
 var player;
 var exploder;
@@ -70,7 +71,6 @@ export default class GameScene extends Phaser.Scene {
 
         this.addCoolometer();
         this.addSightcone();
-        this.initOverlays();
 
         testCircle = this.add.circle(400, 450, 100, 0x6666ff);
 
@@ -78,6 +78,12 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.existing(testCircle);
         this.physics.add.overlap(sightcone, explosionGroup);
 
+        this.initOverlays();
+
+        // game should start paused with the title overlay open
+        this.overlayManager.openTarget('title');
+        this.isRunning = false;
+        exploder.blastTimer.paused = true;
     }
 
     addCoolometer() {
@@ -95,7 +101,8 @@ export default class GameScene extends Phaser.Scene {
             'achievements': new AchievementsOverlay(this),
             'credits': new CreditsOverlay(this),
             'gameOver': new GameOverOverlay(this),
-            'pause': new PauseOverlay(this)
+            'pause': new PauseOverlay(this),
+            'title': new TitleOverlay(this)
         };
         this.overlayManager = new OverlayManager(this, overlayMap);
     }
@@ -170,6 +177,27 @@ export default class GameScene extends Phaser.Scene {
         else {
             sightcone.setFillStyle(0x6666ff);
         }
+
+        this.updateScoreTweens();
+    }
+
+    // If we go above 50% cool enable the buzzing tween, if above 75%
+    // cool also enable the shuffling tween. Use respectively lower
+    // percentages to turn tweens off in order to debounce.
+    updateScoreTweens() {
+        if (coolometerCount > (coolometerMax * 0.5)) {
+            this.score.enableBuzzing();
+        }
+        if (coolometerCount < (coolometerMax * 0.4)) {
+            this.score.disableBuzzing();
+        }
+
+        if (coolometerCount > (coolometerMax * 0.75)) {
+            this.score.enableShuffling();
+        }
+        if (coolometerCount < (coolometerMax * 0.65)) {
+            this.score.disableShuffling();
+        }
     }
 
     testFunction() {
@@ -221,7 +249,7 @@ export default class GameScene extends Phaser.Scene {
         this.model._currentScore = this.score.currentScore;
         this.pauseGame();
         this.overlayManager.openTarget('gameOver');
-        // @TODO: this is a little bit icky, ideally it would be nice
+        // @NOTE: this is a little bit icky, ideally it would be nice
         // if overlays had onOpen and onClose methods they could
         // override to do stuff like this. Too much work for now.
         this.overlayManager.overlayMap['gameOver'].updateScore();
@@ -229,6 +257,7 @@ export default class GameScene extends Phaser.Scene {
 
     restartGame() {
         player.setVelocity(0);
+        player.setRotation(0);
         player.setLocation(100, 100);
         this.score.resetCombo();
         this.score.resetScore();
