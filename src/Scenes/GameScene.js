@@ -20,6 +20,9 @@ var coolometerMax;
 var sightcone;
 var testCircle;
 var explosionGroup;
+var raycaster;
+var ray;
+var rayGraphics;
 
 export default class GameScene extends Phaser.Scene {
 
@@ -79,6 +82,19 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.existing(testCircle);
         this.physics.add.overlap(sightcone, explosionGroup);
 
+        raycaster = this.raycasterPlugin.createRaycaster();
+        ray = raycaster.createRay();
+        ray.enablePhysics();
+        ray.setOrigin(player.x, player.y);
+
+        raycaster.mapGameObjects(explosionGroup.getChildren(), true);
+
+        let intersection = ray.cast();
+
+        rayGraphics = this.add.graphics({ lineStyle: { width: 1, color: 0x00ff00}, fillStyle: { color: 0xff00ff } });
+        let line = new Phaser.Geom.Line(ray.origin.x, ray.origin.y, intersection.x, intersection.y);
+        rayGraphics.fillPoint(ray.origin.x, ray.origin.y, 3)
+        rayGraphics.strokeLineShape(line);
     }
 
     addCoolometer() {
@@ -172,6 +188,18 @@ export default class GameScene extends Phaser.Scene {
         else {
             sightcone.setFillStyle(0x6666ff);
         }
+
+
+        ray.setAngle(player.rotation);
+
+        let intersection = ray.cast();
+  
+        //draw ray
+        rayGraphics.clear();
+        let line = new Phaser.Geom.Line(ray.origin.x, ray.origin.y, intersection.x, intersection.y);
+        rayGraphics.fillPoint(ray.origin.x, ray.origin.y, 3);
+        rayGraphics.strokeLineShape(line);
+        ray.setOrigin(player.x, player.y);
     }
 
     testFunction() {
