@@ -23,6 +23,7 @@ var explosionGroup;
 var raycaster;
 var ray;
 var rayGraphics;
+var intersections;
 
 export default class GameScene extends Phaser.Scene {
 
@@ -86,15 +87,12 @@ export default class GameScene extends Phaser.Scene {
         ray = raycaster.createRay();
         ray.enablePhysics();
         ray.setOrigin(player.x, player.y);
-
-        raycaster.mapGameObjects(explosionGroup.getChildren(), true);
-
-        let intersection = ray.cast();
-
+        // ray.setConeDeg(0);
         rayGraphics = this.add.graphics({ lineStyle: { width: 1, color: 0x00ff00}, fillStyle: { color: 0xff00ff } });
-        let line = new Phaser.Geom.Line(ray.origin.x, ray.origin.y, intersection.x, intersection.y);
-        rayGraphics.fillPoint(ray.origin.x, ray.origin.y, 3)
-        rayGraphics.strokeLineShape(line);
+
+        // let line = new Phaser.Geom.Line(ray.origin.x, ray.origin.y, intersections.x, intersections.y);
+        // rayGraphics.fillPoint(ray.origin.x, ray.origin.y, 3)
+        // rayGraphics.strokeLineShape(line);
     }
 
     addCoolometer() {
@@ -189,17 +187,19 @@ export default class GameScene extends Phaser.Scene {
             sightcone.setFillStyle(0x6666ff);
         }
 
-
+        raycaster.mapGameObjects(explosionGroup.getChildren(), true);
+        ray.setOrigin(player.x, player.y);
         ray.setAngle(player.rotation);
 
-        let intersection = ray.cast();
+        intersections = ray.cast();
+        console.log(raycaster.mappedObjects);
+
+        raycaster.removeMappedObjects(explosionGroup.getChildren());
   
-        //draw ray
         rayGraphics.clear();
-        let line = new Phaser.Geom.Line(ray.origin.x, ray.origin.y, intersection.x, intersection.y);
+        let line = new Phaser.Geom.Line(ray.origin.x, ray.origin.y, intersections.x, intersections.y);
         rayGraphics.fillPoint(ray.origin.x, ray.origin.y, 3);
         rayGraphics.strokeLineShape(line);
-        ray.setOrigin(player.x, player.y);
     }
 
     testFunction() {
