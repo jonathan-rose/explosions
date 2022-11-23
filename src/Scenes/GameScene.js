@@ -178,22 +178,29 @@ export default class GameScene extends Phaser.Scene {
         sightcone.x = player.x + (120*Math.cos(player.angle * (Math.PI/180)));
         sightcone.y = player.y + (120*Math.sin(player.angle * (Math.PI/180)));
 
-        isLooking = (this.physics.overlap(sightcone, explosionGroup));
+        // isLooking = (this.physics.overlap(sightcone, explosionGroup));
 
-        if (isLooking){
-            sightcone.setFillStyle(0xff0000);
-        }
-        else {
-            sightcone.setFillStyle(0x6666ff);
-        }
+        // if (isLooking){
+        //     sightcone.setFillStyle(0xff0000);
+        // }
+        // else {
+        //     sightcone.setFillStyle(0x6666ff);
+        // }
 
         raycaster.mapGameObjects(explosionGroup.getChildren(), true);
         ray.setOrigin(player.x, player.y);
         ray.setAngle(player.rotation);
 
         intersections = ray.cast();
-        console.log(raycaster.mappedObjects);
 
+        if (intersections.object) {
+            if (intersections.object.type === 'Arc') {
+                isLooking = false;
+            }
+            } else { 
+                isLooking = true;
+        }
+      
         raycaster.removeMappedObjects(explosionGroup.getChildren());
   
         rayGraphics.clear();
