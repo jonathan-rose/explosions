@@ -190,8 +190,9 @@ export default class GameScene extends Phaser.Scene {
         raycaster.mapGameObjects(explosionGroup.getChildren(), true);
         ray.setOrigin(player.x, player.y);
         ray.setAngle(player.rotation);
+        ray.setConeDeg(40);
 
-        intersections = ray.cast();
+        intersections = ray.castCone();
 
         if (intersections.object) {
             if (intersections.object.type === 'Arc') {
@@ -202,11 +203,15 @@ export default class GameScene extends Phaser.Scene {
         }
       
         raycaster.removeMappedObjects(explosionGroup.getChildren());
+
+        console.log(intersections);
   
         rayGraphics.clear();
-        let line = new Phaser.Geom.Line(ray.origin.x, ray.origin.y, intersections.x, intersections.y);
         rayGraphics.fillPoint(ray.origin.x, ray.origin.y, 3);
-        rayGraphics.strokeLineShape(line);
+        for (let intersection of intersections) {
+            let line = new Phaser.Geom.Line(ray.origin.x, ray.origin.y, intersection.x, intersection.y);
+            rayGraphics.strokeLineShape(line);
+        }
     }
 
     testFunction() {
