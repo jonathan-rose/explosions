@@ -18,12 +18,13 @@ var isLooking;
 var coolometerCount;
 var coolometerMax;
 var sightcone;
-var testCircle;
 var explosionGroup;
 var raycaster;
 var ray;
 var rayGraphics;
 var intersections;
+
+var coneDebug = false;
 
 export default class GameScene extends Phaser.Scene {
 
@@ -77,22 +78,16 @@ export default class GameScene extends Phaser.Scene {
         this.addSightcone();
         this.initOverlays();
 
-        testCircle = this.add.circle(400, 450, 100, 0x6666ff);
 
         this.physics.add.existing(sightcone);
-        this.physics.add.existing(testCircle);
         this.physics.add.overlap(sightcone, explosionGroup);
 
         raycaster = this.raycasterPlugin.createRaycaster();
         ray = raycaster.createRay();
         ray.enablePhysics();
         ray.setOrigin(player.x, player.y);
-        // ray.setConeDeg(0);
+        ray.setConeDeg(40);
         rayGraphics = this.add.graphics({ lineStyle: { width: 1, color: 0x00ff00}, fillStyle: { color: 0xff00ff } });
-
-        // let line = new Phaser.Geom.Line(ray.origin.x, ray.origin.y, intersections.x, intersections.y);
-        // rayGraphics.fillPoint(ray.origin.x, ray.origin.y, 3)
-        // rayGraphics.strokeLineShape(line);
     }
 
     addCoolometer() {
@@ -190,17 +185,16 @@ export default class GameScene extends Phaser.Scene {
         raycaster.mapGameObjects(explosionGroup.getChildren(), true);
         ray.setOrigin(player.x, player.y);
         ray.setAngle(player.rotation);
-        ray.setConeDeg(40);
 
         intersections = ray.castCone();
 
-        if (intersections.object) {
-            if (intersections.object.type === 'Arc') {
-                isLooking = false;
-            }
-            } else { 
-                isLooking = true;
-        }
+        // if (intersections.object) {
+        //     if (intersections.object.type === 'Arc') {
+        //         isLooking = false;
+        //     }
+        //     } else { 
+        //         isLooking = true;
+        // }
       
         raycaster.removeMappedObjects(explosionGroup.getChildren());
 
@@ -209,8 +203,19 @@ export default class GameScene extends Phaser.Scene {
         rayGraphics.clear();
         rayGraphics.fillPoint(ray.origin.x, ray.origin.y, 3);
         for (let intersection of intersections) {
-            let line = new Phaser.Geom.Line(ray.origin.x, ray.origin.y, intersection.x, intersection.y);
-            rayGraphics.strokeLineShape(line);
+
+            if (coneDebug === true) {
+                let line = new Phaser.Geom.Line(ray.origin.x, ray.origin.y, intersection.x, intersection.y);
+                rayGraphics.strokeLineShape(line);
+            }
+
+            if (intersection.object) {
+                if (intersection.object.type === 'Arc') {
+                    isLooking = false;
+                }
+                } else { 
+                    isLooking = true;
+            }
         }
     }
 
