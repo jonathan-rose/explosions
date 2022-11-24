@@ -68,11 +68,7 @@ export default class GameScene extends Phaser.Scene {
             'down': Phaser.Input.Keyboard.KeyCodes.DOWN,
             'left': Phaser.Input.Keyboard.KeyCodes.LEFT,
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
-            'space': Phaser.Input.Keyboard.KeyCodes.SPACE, // Remove on release
-            'x': Phaser.Input.Keyboard.KeyCodes.X, // Remove on release
         });
-
-        // window.GameScene=this; - Is this important? I think I added this and its useless - Jon
 
         this.addCoolometer();
         this.addSightcone();
@@ -114,12 +110,6 @@ export default class GameScene extends Phaser.Scene {
 
     addSightcone() {
         sightcone = this.add.triangle(200, 200, 0, 148, 148, 148, 74, 0, 0x6666ff);
-
-        // planning on extending or swapping for sprites
-
-        // sightcone = new Phaser.Geom.Triangle(0, 148, 148, 148, 74, 0);
-        // var graphics2 = this.add.graphics({ fillStyle: { color: 0x00ffff }});
-        // graphics2.fillTriangleShape(sightcone);
     }
 
     update () {
@@ -144,14 +134,6 @@ export default class GameScene extends Phaser.Scene {
             player.stop();
         }
 
-        if (keys.space.isDown) { // Remove on release
-            player.setLocation(100, 100);
-        }
-
-        if (keys.x.isDown) { // Remove on release
-            exploder.stopWave();
-        }
-
         if (isLooking && coolometerCount<coolometerMax){
             coolometerCount++;
         }
@@ -173,35 +155,16 @@ export default class GameScene extends Phaser.Scene {
         sightcone.x = player.x + (120*Math.cos(player.angle * (Math.PI/180)));
         sightcone.y = player.y + (120*Math.sin(player.angle * (Math.PI/180)));
 
-        // isLooking = (this.physics.overlap(sightcone, explosionGroup));
-
-        // if (isLooking){
-        //     sightcone.setFillStyle(0xff0000);
-        // }
-        // else {
-        //     sightcone.setFillStyle(0x6666ff);
-        // }
-
+        //Add raycaster and map objects
         raycaster.mapGameObjects(explosionGroup.getChildren(), true);
         ray.setOrigin(player.x, player.y);
         ray.setAngle(player.rotation);
-
         intersections = ray.castCone();
-
-        // if (intersections.object) {
-        //     if (intersections.object.type === 'Arc') {
-        //         isLooking = false;
-        //     }
-        //     } else { 
-        //         isLooking = true;
-        // }
-      
         raycaster.removeMappedObjects(explosionGroup.getChildren());
-
-        console.log(intersections);
   
+        //Draw lines if debug is true
+        //Check type of object looked at
         rayGraphics.clear();
-        rayGraphics.fillPoint(ray.origin.x, ray.origin.y, 3);
         for (let intersection of intersections) {
 
             if (coneDebug === true) {
@@ -217,10 +180,6 @@ export default class GameScene extends Phaser.Scene {
                     isLooking = true;
             }
         }
-    }
-
-    testFunction() {
-        console.log("Hit");
     }
 
     muffleMusic() {
