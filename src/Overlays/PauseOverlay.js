@@ -16,9 +16,6 @@ export default class PauseOverlay extends Overlay {
         this.navData = [
             {text: 'resume',
              action: 'CLOSE_OVERLAY'},
-            {text: 'options',
-             action: 'OPEN_OVERLAY',
-             target: 'options'},
             {text: 'achievements',
              action: 'OPEN_OVERLAY',
              target: 'achievements'},

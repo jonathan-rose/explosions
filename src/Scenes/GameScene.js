@@ -6,8 +6,8 @@ import OverlayManager from '../Overlays/OverlayManager';
 import AchievementsOverlay from '../Overlays/AchievementsOverlay';
 import CreditsOverlay from '../Overlays/CreditsOverlay';
 import GameOverOverlay from '../Overlays/GameOverOverlay';
-import OptionsOverlay from '../Overlays/OptionsOverlay';
 import PauseOverlay from '../Overlays/PauseOverlay';
+import TitleOverlay from '../Overlays/TitleOverlay';
 
 var player;
 var exploder;
@@ -34,11 +34,11 @@ export default class GameScene extends Phaser.Scene {
 
     create () {
         this.isRunning = true;
+        this.model = this.sys.game.globals.model;
 
         this.add.image(400, 300, 'sky').setDepth(-100);
         this.add.image(700, 300, 'coolometer');
 
-        // @TODO: currently not respecting whether the game sound is enabled
         this.sys.game.globals.music = this.sound.add(
             'music',
             {volume: 0.5,
@@ -74,16 +74,17 @@ export default class GameScene extends Phaser.Scene {
         this.addSightcone();
         this.initOverlays();
 
-
-        this.physics.add.existing(sightcone);
-        this.physics.add.overlap(sightcone, explosionGroup);
-
         raycaster = this.raycasterPlugin.createRaycaster();
         ray = raycaster.createRay();
         ray.enablePhysics();
         ray.setOrigin(player.x, player.y);
         ray.setConeDeg(40);
         rayGraphics = this.add.graphics({ lineStyle: { width: 1, color: 0x00ff00}, fillStyle: { color: 0xff00ff } });
+
+        // game should start paused with the title overlay open
+        this.overlayManager.openTarget('title');
+        this.isRunning = false;
+        exploder.blastTimer.paused = true;
     }
 
     addCoolometer() {
@@ -101,8 +102,8 @@ export default class GameScene extends Phaser.Scene {
             'achievements': new AchievementsOverlay(this),
             'credits': new CreditsOverlay(this),
             'gameOver': new GameOverOverlay(this),
-            'options': new OptionsOverlay(this),
-            'pause': new PauseOverlay(this)
+            'pause': new PauseOverlay(this),
+            'title': new TitleOverlay(this)
         };
         this.overlayManager = new OverlayManager(this, overlayMap);
     }
@@ -180,6 +181,27 @@ export default class GameScene extends Phaser.Scene {
                     isLooking = true;
             }
         }
+
+        this.updateScoreTweens();
+    }
+
+    // If we go above 50% cool enable the buzzing tween, if above 75%
+    // cool also enable the shuffling tween. Use respectively lower
+    // percentages to turn tweens off in order to debounce.
+    updateScoreTweens() {
+        if (coolometerCount > (coolometerMax * 0.5)) {
+            this.score.enableBuzzing();
+        }
+        if (coolometerCount < (coolometerMax * 0.4)) {
+            this.score.disableBuzzing();
+        }
+
+        if (coolometerCount > (coolometerMax * 0.75)) {
+            this.score.enableShuffling();
+        }
+        if (coolometerCount < (coolometerMax * 0.65)) {
+            this.score.disableShuffling();
+        }
     }
 
     muffleMusic() {
@@ -196,6 +218,7 @@ export default class GameScene extends Phaser.Scene {
         this.isRunning = false;
         this.physics.pause();
         this.tweens.pauseAll();
+        this.overlayManager.unpauseAllCursorTweens();
         this.muffleMusic();
         exploder.blastTimer.paused = true;
     }
@@ -223,12 +246,18 @@ export default class GameScene extends Phaser.Scene {
 
     // the player has died, go to the gameOver overlay
     endGame() {
+        this.model._currentScore = this.score.currentScore;
         this.pauseGame();
         this.overlayManager.openTarget('gameOver');
+        // @NOTE: this is a little bit icky, ideally it would be nice
+        // if overlays had onOpen and onClose methods they could
+        // override to do stuff like this. Too much work for now.
+        this.overlayManager.overlayMap['gameOver'].updateScore();
     }
 
     restartGame() {
         player.setVelocity(0);
+        player.setRotation(0);
         player.setLocation(100, 100);
         this.score.resetCombo();
         this.score.resetScore();

@@ -44,8 +44,6 @@ export default class OverlayManager {
         });
         this.overlayStack = [];
         this.scene.unpauseGame();
-
-
     }
 
     upHandler() {
@@ -61,5 +59,14 @@ export default class OverlayManager {
     navHandler() {
         if (this.overlayStack.length == 0) { return; }
         this.overlayStack[this.overlayStack.length - 1].navHandler();
+    }
+
+    // little bit of a hack so we can 'pauseAll()' tweens when we
+    // pause the game, then unpause the cursor blinking tweens for the
+    // overlays.
+    unpauseAllCursorTweens() {
+        for (let [name, o] of Object.entries(this.overlayMap)) {
+            o.cursorBlink.resume();
+        }
     }
 }
