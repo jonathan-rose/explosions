@@ -23,8 +23,9 @@ var raycaster;
 var ray;
 var rayGraphics;
 var intersections;
+var playerStart;
 
-var coneDebug = false;
+var coneDebug = true;
 
 export default class GameScene extends Phaser.Scene {
 
@@ -35,6 +36,7 @@ export default class GameScene extends Phaser.Scene {
     create () {
         this.isRunning = true;
         this.model = this.sys.game.globals.model;
+        playerStart = new Phaser.Math.Vector2(this.cameras.main.width/ 2, this.cameras.main.height / 2);
 
         this.add.image(400, 300, 'sky').setDepth(-100);
         this.add.image(700, 300, 'coolometer');
@@ -56,7 +58,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.score = new Score(this);
 
-        player = new Player(this, 100, 100, 'player');
+        player = new Player(this, playerStart.x, playerStart.y, 'player');
 
         exploder = new Exploder(this, 200, 200, 'exploder');
 
@@ -70,16 +72,10 @@ export default class GameScene extends Phaser.Scene {
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
         });
 
+        this.addRaycaster();
         this.addCoolometer();
         this.addSightcone();
         this.initOverlays();
-
-        raycaster = this.raycasterPlugin.createRaycaster();
-        ray = raycaster.createRay();
-        ray.enablePhysics();
-        ray.setOrigin(player.x, player.y);
-        ray.setConeDeg(40);
-        rayGraphics = this.add.graphics({ lineStyle: { width: 1, color: 0x00ff00}, fillStyle: { color: 0xff00ff } });
 
         // game should start paused with the title overlay open
         this.overlayManager.openTarget('title');
@@ -110,7 +106,26 @@ export default class GameScene extends Phaser.Scene {
 
 
     addSightcone() {
-        sightcone = this.add.triangle(200, 200, 0, 148, 148, 148, 74, 0, 0x6666ff);
+        sightcone = this.add.triangle(
+            ray.origin.x, // No effect on size
+            ray.origin.y, // No effect on size
+            0, ray.rayRange, // Top left
+            ray.rayRange, ray.rayRange, // Top right
+            (ray.rayRange / 2), 0, 
+            0x6666ff, 0.25);
+    }
+
+    addRaycaster() {
+        raycaster = this.raycasterPlugin.createRaycaster();
+        ray = raycaster.createRay();
+        ray.enablePhysics();
+        ray.setOrigin(player.x, player.y);
+        ray.setConeDeg(40);
+        ray.setRayRange(400);
+        rayGraphics = this.add.graphics({ 
+            lineStyle: { width: 1, color: 0x00ff00}, 
+            fillStyle: { color: 0xff00ff } 
+        });
     }
 
     update () {
