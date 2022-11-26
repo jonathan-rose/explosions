@@ -8,7 +8,8 @@ export default class TitleOverlay extends Overlay {
 
         this.navData = [
             {text: 'Play',
-             action: 'CLOSE_OVERLAY'}
+             action: 'CLOSE_OVERLAY',
+             extras: ['RESET_GAME_START_TIMER']}
         ];
 
         this.initNavs();

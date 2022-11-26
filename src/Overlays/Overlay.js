@@ -101,7 +101,7 @@ export default class Overlay extends Phaser.GameObjects.Container {
     }
 
     navHandler() {
-        let {text, action, target} = this.navData[this.cursorPos];
+        let {text, action, target, extras} = this.navData[this.cursorPos];
         switch(action) {
         case 'CLOSE_OVERLAY':
             this.scene.overlayManager.disableTop();
@@ -113,6 +113,10 @@ export default class Overlay extends Phaser.GameObjects.Container {
             this.scene.overlayManager.disableAll();
             this.scene.restartGame();
             break;
+        }
+
+        if (extras != null && extras.includes('RESET_GAME_START_TIMER')) {
+            this.scene.gameStartTimer = Date.now();
         }
     }
 }
