@@ -84,7 +84,7 @@ export default class GameScene extends Phaser.Scene {
         this.initOverlays();
 
         // game should start paused with the title overlay open
-        this.overlayManager.openTarget('pause'); // Changed for testing
+        this.overlayManager.openTarget('title'); // Changed for testing
         this.isRunning = false;
         exploder.blastTimer.paused = true;
     }
