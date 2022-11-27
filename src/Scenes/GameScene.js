@@ -22,6 +22,9 @@ var raycaster;
 var ray;
 var rayGraphics;
 var intersections;
+var playerStart;
+var rayAngle = 50; // Need to make this determine by rayRange
+var rayRange = 300; // Also determines sightcone size :)
 
 var coneDebug = false;
 
@@ -34,6 +37,7 @@ export default class GameScene extends Phaser.Scene {
     create () {
         this.isRunning = true;
         this.model = this.sys.game.globals.model;
+        playerStart = new Phaser.Math.Vector2(this.cameras.main.width/ 2, this.cameras.main.height / 2);
 
         this.add.image(400, 300, 'sky').setDepth(-100);
         this.add.image(700, 300, 'coolometer');
@@ -55,7 +59,8 @@ export default class GameScene extends Phaser.Scene {
 
         this.score = new Score(this);
 
-        this.player = new Player(this, 100, 100, 'player');
+        player = new Player(this, playerStart.x, playerStart.y, 'player');
+
         this.totalDistance = 0;
 
         exploder = new Exploder(this, 200, 200, 'exploder');
@@ -70,19 +75,13 @@ export default class GameScene extends Phaser.Scene {
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
         });
 
+        this.addRaycaster();
         this.addCoolometer();
         this.addSightcone();
         this.initOverlays();
 
-        raycaster = this.raycasterPlugin.createRaycaster();
-        ray = raycaster.createRay();
-        ray.enablePhysics();
-        ray.setOrigin(player.x, player.y);
-        ray.setConeDeg(40);
-        rayGraphics = this.add.graphics({ lineStyle: { width: 1, color: 0x00ff00}, fillStyle: { color: 0xff00ff } });
-
         // game should start paused with the title overlay open
-        this.overlayManager.openTarget('title');
+        this.overlayManager.openTarget('title'); // Changed for testing
         this.isRunning = false;
         exploder.blastTimer.paused = true;
     }
@@ -110,7 +109,26 @@ export default class GameScene extends Phaser.Scene {
 
 
     addSightcone() {
-        sightcone = this.add.triangle(200, 200, 0, 148, 148, 148, 74, 0, 0x6666ff);
+        sightcone = this.add.triangle(
+            player.getTopCenter().x, player.getTopCenter().y,
+            0, rayRange,
+            rayRange, rayRange,
+            rayRange / 2, 0,
+            0xDFAF15, 0.15);
+        
+        sightcone.setDepth(-3);
+    }
+
+    addRaycaster() {
+        raycaster = this.raycasterPlugin.createRaycaster();
+        ray = raycaster.createRay();
+        ray.enablePhysics();
+        ray.setConeDeg(rayAngle);
+        ray.setRayRange(rayRange);
+        rayGraphics = this.add.graphics({ 
+            lineStyle: { width: 1, color: 0x00ff00}, 
+            fillStyle: { color: 0xff00ff } 
+        });
     }
 
     update () {
@@ -132,7 +150,7 @@ export default class GameScene extends Phaser.Scene {
         }
 
         if (keys.down.isDown) {
-            this.player.moveBackward();
+            player.reverse();
         }
 
         if (isLooking && coolometerCount<coolometerMax){
@@ -152,14 +170,14 @@ export default class GameScene extends Phaser.Scene {
         graphics.fillRectShape(rectangle);
 
         //update sightcone
-        sightcone.angle = this.player.angle -90;
-        sightcone.x = this.player.x + (120*Math.cos(this.player.angle * (Math.PI/180)));
-        sightcone.y = this.player.y + (120*Math.sin(this.player.angle * (Math.PI/180)));
+        sightcone.angle = player.angle - 180;
+        sightcone.x = player.getTopCenter().x + ((rayRange / 2)*Math.cos((player.angle - 90) * (Math.PI/180)));
+        sightcone.y = player.getTopCenter().y + ((rayRange / 2)*Math.sin((player.angle - 90) * (Math.PI/180)));
 
         //Add raycaster and map objects
         raycaster.mapGameObjects(explosionGroup.getChildren(), true);
-        ray.setOrigin(player.x, player.y);
-        ray.setAngle(player.rotation);
+        ray.setOrigin(player.getTopCenter().x, player.getTopCenter().y);
+        ray.setAngleDeg(player.angle - 90);
         intersections = ray.castCone();
         raycaster.removeMappedObjects(explosionGroup.getChildren());
 
