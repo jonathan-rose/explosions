@@ -59,7 +59,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.score = new Score(this);
 
-        player = new Player(this, playerStart.x, playerStart.y, 'player');
+        this.player = new Player(this, playerStart.x, playerStart.y, 'player');
 
         this.totalDistance = 0;
 
@@ -110,7 +110,7 @@ export default class GameScene extends Phaser.Scene {
 
     addSightcone() {
         sightcone = this.add.triangle(
-            player.getTopCenter().x, player.getTopCenter().y,
+            this.player.getTopCenter().x, this.player.getTopCenter().y,
             0, rayRange,
             rayRange, rayRange,
             rayRange / 2, 0,
@@ -150,7 +150,7 @@ export default class GameScene extends Phaser.Scene {
         }
 
         if (keys.down.isDown) {
-            player.reverse();
+            this.player.reverse();
         }
 
         if (isLooking && coolometerCount<coolometerMax){
@@ -170,14 +170,14 @@ export default class GameScene extends Phaser.Scene {
         graphics.fillRectShape(rectangle);
 
         //update sightcone
-        sightcone.angle = player.angle - 180;
-        sightcone.x = player.getTopCenter().x + ((rayRange / 2)*Math.cos((player.angle - 90) * (Math.PI/180)));
-        sightcone.y = player.getTopCenter().y + ((rayRange / 2)*Math.sin((player.angle - 90) * (Math.PI/180)));
+        sightcone.angle = this.player.angle - 180;
+        sightcone.x = this.player.getTopCenter().x + ((rayRange / 2)*Math.cos((this.player.angle - 90) * (Math.PI/180)));
+        sightcone.y = this.player.getTopCenter().y + ((rayRange / 2)*Math.sin((this.player.angle - 90) * (Math.PI/180)));
 
         //Add raycaster and map objects
         raycaster.mapGameObjects(explosionGroup.getChildren(), true);
-        ray.setOrigin(player.getTopCenter().x, player.getTopCenter().y);
-        ray.setAngleDeg(player.angle - 90);
+        ray.setOrigin(this.player.getTopCenter().x, this.player.getTopCenter().y);
+        ray.setAngleDeg(this.player.angle - 90);
         intersections = ray.castCone();
         raycaster.removeMappedObjects(explosionGroup.getChildren());
 
