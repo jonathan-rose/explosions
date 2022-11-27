@@ -24,7 +24,7 @@ var rayGraphics;
 var intersections;
 var playerStart;
 var rayAngle = 50; // Need to make this determine by rayRange
-var rayRange = 300; // Also determines sightcone size :)
+var rayRange = 200; // Also determines sightcone size :)
 
 var coneDebug = false;
 
@@ -40,7 +40,10 @@ export default class GameScene extends Phaser.Scene {
         playerStart = new Phaser.Math.Vector2(this.cameras.main.width/ 2, this.cameras.main.height / 2);
 
         this.add.image(400, 300, 'sky').setDepth(-100);
-        this.add.image(700, 300, 'coolometer');
+        this.coolometerBackground = this.add.image(700, 300, 'coolometer-background');
+        this.coolometerForeground = this.add.image(700, 300, 'coolometer-foreground');
+        this.coolometerForeground.setDepth(3);
+
 
         this.sys.game.globals.music = this.sound.add(
             'music',
@@ -88,9 +91,28 @@ export default class GameScene extends Phaser.Scene {
 
     addCoolometer() {
         graphics = this.add.graphics({ fillStyle: { color: 0x00ffff }});
-        rectangle = new Phaser.Geom.Rectangle(650, 50, 100, 500);
+        rectangle = new Phaser.Geom.Rectangle(
+            this.coolometerForeground.getTopLeft().x, 
+            this.coolometerForeground.getTopLeft().y, 
+            this.coolometerForeground.width, 
+            this.coolometerForeground.height
+            );
         coolometerCount = 0;
         coolometerMax = 500;
+
+        const shape = this.make.graphics();
+        shape.fillStyle(0xffffff);
+        shape.beginPath();
+        shape.fillRoundedRect(
+            rectangle.x, 
+            rectangle.y,
+            rectangle.width,
+            rectangle.height,
+            45
+            )
+
+        const mask = shape.createGeometryMask();
+        graphics.setMask(mask);
 
         this.escKey = this.input.keyboard.addKey('ESC');
         this.escKey.on('down', this.escHandler, this);
