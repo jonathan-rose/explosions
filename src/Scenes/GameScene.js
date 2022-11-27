@@ -24,6 +24,7 @@ var ray;
 var rayGraphics;
 var intersections;
 var playerStart;
+var rayRange = 200;
 
 var coneDebug = true;
 
@@ -78,7 +79,7 @@ export default class GameScene extends Phaser.Scene {
         this.initOverlays();
 
         // game should start paused with the title overlay open
-        this.overlayManager.openTarget('title');
+        this.overlayManager.openTarget('pause'); // Changed for testing
         this.isRunning = false;
         exploder.blastTimer.paused = true;
     }
@@ -109,19 +110,22 @@ export default class GameScene extends Phaser.Scene {
         sightcone = this.add.triangle(
             ray.origin.x, // No effect on size
             ray.origin.y, // No effect on size
-            0, ray.rayRange, // Top left
-            ray.rayRange, ray.rayRange, // Top right
-            (ray.rayRange / 2), 0, 
+            -(rayRange / 2), rayRange / 2, 
+            0, rayRange / 2,
+            0, -(rayRange / 2), 
             0x6666ff, 0.25);
+
+        // sightcone.angle = player.angle -90;
+        // sightcone.setOrigin(0);
     }
 
     addRaycaster() {
         raycaster = this.raycasterPlugin.createRaycaster();
         ray = raycaster.createRay();
         ray.enablePhysics();
-        ray.setOrigin(player.x, player.y);
+        console.log();
         ray.setConeDeg(40);
-        ray.setRayRange(400);
+        ray.setRayRange(rayRange);
         rayGraphics = this.add.graphics({ 
             lineStyle: { width: 1, color: 0x00ff00}, 
             fillStyle: { color: 0xff00ff } 
@@ -147,7 +151,7 @@ export default class GameScene extends Phaser.Scene {
         }
 
         if (keys.down.isDown) {
-            player.stop();
+            player.reverse();
         }
 
         if (isLooking && coolometerCount<coolometerMax){
@@ -167,14 +171,14 @@ export default class GameScene extends Phaser.Scene {
         graphics.fillRectShape(rectangle);
 
         //update sightcone
-        sightcone.angle = player.angle -90;
+        sightcone.angle = player.angle;
         sightcone.x = player.x + (120*Math.cos(player.angle * (Math.PI/180)));
         sightcone.y = player.y + (120*Math.sin(player.angle * (Math.PI/180)));
 
         //Add raycaster and map objects
         raycaster.mapGameObjects(explosionGroup.getChildren(), true);
-        ray.setOrigin(player.x, player.y);
-        ray.setAngle(player.rotation);
+        ray.setOrigin(player.getTopCenter().x, player.getTopCenter().y);
+        ray.setAngle(player.rotation - 90);
         intersections = ray.castCone();
         raycaster.removeMappedObjects(explosionGroup.getChildren());
   
