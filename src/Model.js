@@ -27,8 +27,8 @@ export default class Model {
             stayCool: {description: 'Stay at max cool for 30 seconds',
                        unlocked: false,
                        image: 'achievement_cool2'},
-            // @NOTE: this achievement is intentionally left blank to annoy people
             unknown: {description: '?????????',
+                      secretDescription: 'Look at the source code for the game ;)',
                       unlocked: false}
         };
     }
@@ -47,5 +47,9 @@ export default class Model {
 
     get highscore() {
         return this._highscore;
+    }
+
+    set unlockAchievement(name) {
+        this._achievements[name].unlocked = true;
     }
 }

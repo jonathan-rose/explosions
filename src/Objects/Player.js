@@ -42,7 +42,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     reverse() {
-        // this.setVelocity(0);
         const vec = this.scene.physics.velocityFromAngle(this.angle, this.reverseSpeed);
         this.setVelocity(-vec.y, vec.x);
     }

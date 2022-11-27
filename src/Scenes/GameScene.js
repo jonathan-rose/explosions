@@ -9,7 +9,6 @@ import GameOverOverlay from '../Overlays/GameOverOverlay';
 import PauseOverlay from '../Overlays/PauseOverlay';
 import TitleOverlay from '../Overlays/TitleOverlay';
 
-var player;
 var exploder;
 var keys;
 var rectangle;
@@ -61,6 +60,8 @@ export default class GameScene extends Phaser.Scene {
         this.score = new Score(this);
 
         player = new Player(this, playerStart.x, playerStart.y, 'player');
+
+        this.totalDistance = 0;
 
         exploder = new Exploder(this, 200, 200, 'exploder');
 
@@ -137,15 +138,15 @@ export default class GameScene extends Phaser.Scene {
         graphics.clear();
 
         if (keys.left.isDown) {
-            player.moveLeft();
+            this.player.moveLeft();
         }
 
         if (keys.right.isDown) {
-            player.moveRight();
+            this.player.moveRight();
         }
 
         if (keys.up.isDown) {
-            player.moveForward();
+            this.player.moveForward();
         }
 
         if (keys.down.isDown) {
@@ -159,7 +160,7 @@ export default class GameScene extends Phaser.Scene {
             coolometerCount--;
         }
 
-        this.score.setCombo(coolometerCount + 1);
+        this.score.setCombo(Math.pow(coolometerCount, 3) + 1);
         this.score.incScore();
 
         // update coolometer
@@ -179,7 +180,7 @@ export default class GameScene extends Phaser.Scene {
         ray.setAngleDeg(player.angle - 90);
         intersections = ray.castCone();
         raycaster.removeMappedObjects(explosionGroup.getChildren());
-  
+
         //Draw lines if debug is true
         //Check type of object looked at
         rayGraphics.clear();
@@ -194,12 +195,75 @@ export default class GameScene extends Phaser.Scene {
                 if (intersection.object.type === 'Arc') {
                     isLooking = false;
                 }
-                } else { 
+                } else {
                     isLooking = true;
             }
         }
 
         this.updateScoreTweens();
+
+        this.updateAchievements();
+    }
+
+    unlockAchievement(name) {
+        this.model._achievements[name].unlocked = true;
+        this.overlayManager.overlayMap['achievements'].updateAchievements();
+    }
+
+    updateAchievements() {
+        // lookedAtExplosion1
+        if (isLooking) {
+            this.unlockAchievement('lookedAtExplosion1');
+        }
+
+        // lookedAtExplosion2
+        // @NOTE: this doesn't work properly if they start the game by
+        // hitting ESC from the title overlay, not worth fixing
+        if (isLooking && (Date.now() - this.gameStartTime) <= 2000) {
+            this.unlockAchievement('lookedAtExplosion2');
+        }
+
+        // distanceWalked
+        this.totalDistance += this.player.body.speed;
+        // arbitrary long distance to represent 500 miles
+        if (this.totalDistance > 5000000) {
+            this.unlockAchievement('distanceWalked');
+        }
+
+        // highScore1
+        if (this.score.currentScore > 1000000) {
+            this.unlockAchievement('highScore1');
+        }
+
+        // highScore2
+        if (this.score.currentScore > 1000000000) {
+            this.unlockAchievement('highScore2');
+        }
+
+        // highScore3
+        if (this.score.currentScore > 1000000000000) {
+            this.unlockAchievement('highScore3');
+        }
+
+        // maxCool
+        if (coolometerCount == coolometerMax) {
+            this.unlockAchievement('maxCool');
+        }
+
+        // stayCool
+        if (coolometerCount == coolometerMax) {
+            if (this.maxCoolTime == null) {
+                this.maxCoolTime = Date.now();
+            } else {
+                // @NOTE: you can cheat by pausing while at max cool,
+                // not worth fixing
+                if (Date.now() - this.maxCoolTime > 30000) {
+                    this.unlockAchievement('stayCool');
+                }
+            }
+        } else {
+            this.maxCoolTime = null;
+        }
     }
 
     // If we go above 50% cool enable the buzzing tween, if above 75%
@@ -273,12 +337,13 @@ export default class GameScene extends Phaser.Scene {
     }
 
     restartGame() {
-        player.setVelocity(0);
-        player.setRotation(0);
-        player.setLocation(100, 100);
+        this.player.setVelocity(0);
+        this.player.setRotation(0);
+        this.player.setLocation(100, 100);
         this.score.resetCombo();
         this.score.resetScore();
         coolometerCount = 0;
+        this.gameStartTime = Date.now();
 
         // @TODO: add whatever is required to reset explosions
     }

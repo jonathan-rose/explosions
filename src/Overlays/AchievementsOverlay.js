@@ -55,6 +55,7 @@ export default class AchievementsOverlay extends Overlay {
             }
 
             this.achievements.push({
+                name: name,
                 alphaLayer: alphaLayer,
                 image: image,
                 description: aData.description
@@ -64,12 +65,13 @@ export default class AchievementsOverlay extends Overlay {
         };
 
         // tooltips have to be added after to stay on top of alphaLayers
-        // (setDepth() doesn't seem to fix this)
+        // (setDepth() doesn't work inside containers)
+        this.tooltips = [];
         this.achievements.forEach((a) => {
             let t = new Tooltip(this.scene, a.description);
             t.visible = false;
-            t.setDepth(2);
             this.add(t);
+            this.tooltips.push(t);
             a.alphaLayer.setInteractive();
             a.alphaLayer.on('pointerover', () => { t.visible = true; });
             a.alphaLayer.on('pointerout', () => { t.visible = false; });
@@ -83,5 +85,19 @@ export default class AchievementsOverlay extends Overlay {
         ];
 
         this.initNavs();
+    }
+
+    updateAchievements() {
+        let achievements = this.model._achievements;
+        this.achievements.forEach(({name, alphaLayer, image}) => {
+            if (achievements[name].unlocked) {
+                this.bringToTop(image);
+                alphaLayer.fillColor = 0x00FFFF;
+            }
+        }, this);
+
+        this.tooltips.forEach((t) => {
+            this.bringToTop(t);
+        }, this);
     }
 }

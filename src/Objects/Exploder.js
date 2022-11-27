@@ -39,7 +39,15 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
 
         var startingRadius = 0;
 
-        var warning = this.scene.add.ellipse(x, y, radius * 2, radius * 2, 0xFA8888, 0.25);
+        var warning = this.scene.add.ellipse(x, y, radius * 2, radius * 2, 0xFA8888, 0.45);
+        this.scene.tweens.add({
+            targets: warning,
+            alpha: 0.35,
+            step: 1,
+            duration: 200,
+            yoyo: true,
+            repeat: -1
+        });
 
         var r = this.scene.add.circle(x, y, startingRadius, 0x6666ff); // Should the starting radius be an argument?
 
