@@ -35,7 +35,7 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
 
         var startingRadius = 0;
 
-        var warning = this.scene.add.ellipse(x, y, radius * 2, radius * 2, 0xF2CD60, 0.45);
+        var warning = this.scene.add.circle(x, y, radius, 0xF2CD60, 0.45);
         this.scene.tweens.add({
             targets: warning,
             alpha: 0.35,
@@ -45,23 +45,23 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
             repeat: -1
         });
 
-        var r = this.scene.add.circle(x, y, startingRadius, 0xF25757); // Should the starting radius be an argument?
+        var explosion = this.scene.add.circle(x, y, startingRadius, 0xF25757); // Should the starting radius be an argument?
 
         warning.setDepth(-2);
-        r.setDepth(-1);
+        explosion.setDepth(-1);
 
         this.scene.tweens.add({
-            targets: r,
+            targets: explosion,
             delay: delay * 1000,
             radius: radius,
             duration: duration * 1000,
             onComplete: function () {
-                r.destroy();
+                explosion.destroy();
                 warning.destroy();
             },
         });
 
-        this.explosionGroup.add(r);
+        this.explosionGroup.add(explosion);
     }
 
     createExplosions(count = 1) { // These need to be tweaked along with the explode() function
