@@ -230,6 +230,8 @@ export default class GameScene extends Phaser.Scene {
         this.updateScoreTweens();
 
         this.updateAchievements();
+
+        this.checkDeath();
     }
 
     updateSightcone() {
@@ -362,6 +364,20 @@ export default class GameScene extends Phaser.Scene {
             if (this.overlayManager.overlayStack.length == 0) {
                 this.unpauseGame();
             }
+        }
+    }
+
+    checkDeath() {
+        let touchingExplosion = false;
+        explosionGroup.getChildren().forEach((e) => {
+            let d = Math.sqrt(Math.pow(e.x - this.player.x, 2) + Math.pow(e.y - this.player.y, 2));
+            if (d < e.radius) {
+                touchingExplosion = true;
+            }
+        }, this);
+
+        if (touchingExplosion) {
+            this.endGame();
         }
     }
 
