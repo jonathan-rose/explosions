@@ -62,6 +62,15 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
         });
 
         this.explosionGroup.add(explosion);
+
+        // var particles = this.add.particles('red');
+
+        // var emitter = particles.createEmitter();
+
+        // emitter.setPosition(400, 300);
+        // emitter.setSpeed(200);
+        // emitter.setLifespan(3000);
+        // emitter.setScale(0.5);
     }
 
     createExplosions(count = 1) { // These need to be tweaked along with the explode() function
