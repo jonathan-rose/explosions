@@ -38,7 +38,7 @@ export default class GameScene extends Phaser.Scene {
         this.model = this.sys.game.globals.model;
         playerStart = new Phaser.Math.Vector2(this.cameras.main.width/ 2, this.cameras.main.height / 2);
 
-        this.add.image(400, 300, 'sky').setDepth(-100);
+        this.add.image(400, 300, 'background').setDepth(-100);
         this.coolometerBackground = this.add.image(725, 300, 'coolometer-background');
         this.coolometerForeground = this.add.image(725, 300, 'coolometer-foreground');
         this.coolometerForeground.setDepth(3);
