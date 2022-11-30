@@ -48,4 +48,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         const vec = this.scene.physics.velocityFromAngle(this.angle, this.reverseSpeed);
         this.setVelocity(-vec.y, vec.x);
     }
+
+    quickturn() {
+        this.angle += 180;
+    }
 }

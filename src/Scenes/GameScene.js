@@ -78,6 +78,7 @@ export default class GameScene extends Phaser.Scene {
             'down': Phaser.Input.Keyboard.KeyCodes.DOWN,
             'left': Phaser.Input.Keyboard.KeyCodes.LEFT,
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
+            'space': Phaser.Input.Keyboard.KeyCodes.SPACE,
         });
 
         this.addRaycaster();
@@ -176,6 +177,10 @@ export default class GameScene extends Phaser.Scene {
 
         if (keys.down.isDown) {
             this.player.reverse();
+        }
+        
+        if (Phaser.Input.Keyboard.JustDown(keys.space)) {
+            this.player.quickturn();
         }
 
         this.updateSightcone();
