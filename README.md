@@ -19,4 +19,5 @@ npm start
 
 ``` bash
 npm run build
+zip -r explosions webpack/dist/*
 ```

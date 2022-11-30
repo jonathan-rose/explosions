@@ -40,7 +40,6 @@ export default class GameOverOverlay extends Overlay {
         let curr = this.model._currentScore;
         let text = 'Score: ';
 
-        // @TODO: add score/highscore
         if (this.scene.score.currentScore > this.model._highscore) {
             this.model._highscore = curr;
             text = 'New Highscore: ';

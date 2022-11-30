@@ -72,7 +72,17 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.image('sky', 'assets/img/sky.png');
         this.load.image('green', 'assets/particles/green.png');
         this.load.image('player', 'assets/img/player.png');
-        this.load.image('coolometer', 'assets/img/coolometerBackground.png');
+        this.load.image('coolometer-background', 'assets/img/coolometerBackground.png');
+        this.load.image('coolometer-foreground', 'assets/img/coolometerForeground.png');
+
+        this.load.image('title_cool', 'assets/img/title/cool.png');
+        this.load.image('title_guys', 'assets/img/title/guys.png');
+        this.load.image('title_dont', 'assets/img/title/dont.png');
+        this.load.image('title_look', 'assets/img/title/look.png');
+        this.load.image('title_at', 'assets/img/title/at.png');
+        this.load.image('title_explosions1', 'assets/img/title/explosions-blue.png');
+        this.load.image('title_explosions2', 'assets/img/title/explosions-pink.png');
+        this.load.image('title_explosions3', 'assets/img/title/explosions-white.png');
 
         this.load.image('achievement_lookedAtExplosion1', 'assets/img/achievement_eye-1.png');
         this.load.image('achievement_lookedAtExplosion2', 'assets/img/achievement_eye-2.png');

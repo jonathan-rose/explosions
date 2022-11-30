@@ -1,4 +1,5 @@
 import 'phaser';
+import Utils from '../Utils';
 
 export default class Overlay extends Phaser.GameObjects.Container {
     constructor(scene) {
@@ -47,7 +48,8 @@ export default class Overlay extends Phaser.GameObjects.Container {
         this.visible = false;
     }
 
-    // @TODO: make initial y-offset configurable to allow a single 'back' at the bottom
+    // Child classes should call this at the end of their constructor
+    // to create the navigation options
     initNavs() {
         if (this.navData.length == 0) { return; }
 
@@ -88,23 +90,18 @@ export default class Overlay extends Phaser.GameObjects.Container {
         });
     }
 
-    // silly JavaScript, need an actual mod function that works on negatives
-    mod(n, m) {
-        return ((n % m) + m) % m;
-    }
-
     upHandler() {
-        this.cursorPos = this.mod((this.cursorPos - 1), this.navs.length);
+        this.cursorPos = Utils.mod((this.cursorPos - 1), this.navs.length);
         this.cursor.y = this.yOffset + (this.cursorPos * 100);
     }
 
     downHandler() {
-        this.cursorPos = this.mod((this.cursorPos + 1), this.navs.length);
+        this.cursorPos = Utils.mod((this.cursorPos + 1), this.navs.length);
         this.cursor.y = this.yOffset + (this.cursorPos * 100);
     }
 
     navHandler() {
-        let {text, action, target} = this.navData[this.cursorPos];
+        let {text, action, target, extras} = this.navData[this.cursorPos];
         switch(action) {
         case 'CLOSE_OVERLAY':
             this.scene.overlayManager.disableTop();
@@ -116,6 +113,10 @@ export default class Overlay extends Phaser.GameObjects.Container {
             this.scene.overlayManager.disableAll();
             this.scene.restartGame();
             break;
+        }
+
+        if (extras != null && extras.includes('RESET_GAME_START_TIMER')) {
+            this.scene.gameStartTimer = Date.now();
         }
     }
 }

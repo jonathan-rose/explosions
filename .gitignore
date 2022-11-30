@@ -17,5 +17,6 @@ out/
 dist/
 scripts/tsgen/test/bin/
 scripts/tsgen/test/output.txt
+explosions.zip
 
 plugins/spine/spine-runtimes/

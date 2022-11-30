@@ -7,18 +7,25 @@ import AchievementsOverlay from '../Overlays/AchievementsOverlay';
 import CreditsOverlay from '../Overlays/CreditsOverlay';
 import GameOverOverlay from '../Overlays/GameOverOverlay';
 import PauseOverlay from '../Overlays/PauseOverlay';
+import TitleOverlay from '../Overlays/TitleOverlay';
 
-var player;
-var exploder;
 var keys;
 var rectangle;
 var graphics;
-var isLooking;
+var isLooking = true;
 var coolometerCount;
 var coolometerMax;
 var sightcone;
-var testCircle;
 var explosionGroup;
+var raycaster;
+var ray;
+var rayGraphics;
+var intersections;
+var playerStart;
+var rayAngle = 50; // Need to make this determine by rayRange
+var rayRange = 300; // Also determines sightcone size :)
+
+var coneDebug = false;
 
 export default class GameScene extends Phaser.Scene {
 
@@ -29,9 +36,13 @@ export default class GameScene extends Phaser.Scene {
     create () {
         this.isRunning = true;
         this.model = this.sys.game.globals.model;
+        playerStart = new Phaser.Math.Vector2(this.cameras.main.width/ 2, this.cameras.main.height / 2);
 
         this.add.image(400, 300, 'sky').setDepth(-100);
-        this.add.image(700, 300, 'coolometer');
+        this.coolometerBackground = this.add.image(725, 300, 'coolometer-background');
+        this.coolometerForeground = this.add.image(725, 300, 'coolometer-foreground');
+        this.coolometerForeground.setDepth(3);
+
 
         this.sys.game.globals.music = this.sound.add(
             'music',
@@ -50,41 +61,57 @@ export default class GameScene extends Phaser.Scene {
 
         this.score = new Score(this);
 
-        player = new Player(this, 100, 100, 'player');
+        this.player = new Player(this, playerStart.x, playerStart.y, 'player');
 
-        exploder = new Exploder(this, 200, 200, 'exploder');
+        this.totalDistance = 0;
 
-        exploder.startWave();
-        explosionGroup = exploder.explosionGroup;
+        this.exploder = new Exploder(this, 200, 200, 'exploder');
+
+        this.exploder.startWave();
+        explosionGroup = this.exploder.explosionGroup;
 
         keys = this.input.keyboard.addKeys({
             'up': Phaser.Input.Keyboard.KeyCodes.UP,
             'down': Phaser.Input.Keyboard.KeyCodes.DOWN,
             'left': Phaser.Input.Keyboard.KeyCodes.LEFT,
             'right': Phaser.Input.Keyboard.KeyCodes.RIGHT,
-            'space': Phaser.Input.Keyboard.KeyCodes.SPACE, // Remove on release
-            'x': Phaser.Input.Keyboard.KeyCodes.X, // Remove on release
         });
 
-        // window.GameScene=this; - Is this important? I think I added this and its useless - Jon
-
+        this.addRaycaster();
         this.addCoolometer();
         this.addSightcone();
         this.initOverlays();
 
-        testCircle = this.add.circle(400, 450, 100, 0x6666ff);
-
-        this.physics.add.existing(sightcone);
-        this.physics.add.existing(testCircle);
-        this.physics.add.overlap(sightcone, explosionGroup);
-
+        // game should start paused with the title overlay open
+        this.overlayManager.openTarget('title'); // Changed for testing
+        this.isRunning = false;
+        this.exploder.blastTimer.paused = true;
     }
 
     addCoolometer() {
         graphics = this.add.graphics({ fillStyle: { color: 0x00ffff }});
-        rectangle = new Phaser.Geom.Rectangle(650, 50, 100, 500);
+        rectangle = new Phaser.Geom.Rectangle(
+            this.coolometerForeground.getTopLeft().x,
+            this.coolometerForeground.getTopLeft().y,
+            this.coolometerForeground.width,
+            this.coolometerForeground.height
+            );
         coolometerCount = 0;
         coolometerMax = 500;
+
+        const shape = this.make.graphics();
+        shape.fillStyle(0xffffff);
+        shape.beginPath();
+        shape.fillRoundedRect(
+            rectangle.x + 2,
+            rectangle.y + 8,
+            rectangle.width - 4,
+            rectangle.height - 16,
+            45
+        );
+
+        const mask = shape.createGeometryMask();
+        graphics.setMask(mask);
 
         this.escKey = this.input.keyboard.addKey('ESC');
         this.escKey.on('down', this.escHandler, this);
@@ -95,20 +122,36 @@ export default class GameScene extends Phaser.Scene {
             'achievements': new AchievementsOverlay(this),
             'credits': new CreditsOverlay(this),
             'gameOver': new GameOverOverlay(this),
-            'pause': new PauseOverlay(this)
+            'pause': new PauseOverlay(this),
+            'title': new TitleOverlay(this)
         };
         this.overlayManager = new OverlayManager(this, overlayMap);
     }
 
 
     addSightcone() {
-        sightcone = this.add.triangle(200, 200, 0, 148, 148, 148, 74, 0, 0x6666ff);
+        sightcone = this.add.triangle(
+            this.player.getTopCenter().x, this.player.getTopCenter().y,
+            0, rayRange,
+            rayRange, rayRange,
+            rayRange / 2, 0,
+            0x78e900, 0.25);
 
-        // planning on extending or swapping for sprites
+        sightcone.setDepth(-3);
 
-        // sightcone = new Phaser.Geom.Triangle(0, 148, 148, 148, 74, 0);
-        // var graphics2 = this.add.graphics({ fillStyle: { color: 0x00ffff }});
-        // graphics2.fillTriangleShape(sightcone);
+        this.updateSightcone();
+    }
+
+    addRaycaster() {
+        raycaster = this.raycasterPlugin.createRaycaster();
+        ray = raycaster.createRay();
+        ray.enablePhysics();
+        ray.setConeDeg(rayAngle);
+        ray.setRayRange(rayRange);
+        rayGraphics = this.add.graphics({
+            lineStyle: { width: 1, color: 0x00ff00},
+            fillStyle: { color: 0xff00ff }
+        });
     }
 
     update () {
@@ -118,37 +161,64 @@ export default class GameScene extends Phaser.Scene {
         graphics.clear();
 
         if (keys.left.isDown) {
-            player.moveLeft();
+            this.player.moveLeft();
         }
 
         if (keys.right.isDown) {
-            player.moveRight();
+            this.player.moveRight();
         }
 
         if (keys.up.isDown) {
-            player.moveForward();
+            this.player.moveForward();
         }
 
         if (keys.down.isDown) {
-            player.stop();
+            this.player.reverse();
         }
 
-        if (keys.space.isDown) { // Remove on release
-            player.setLocation(100, 100);
+        this.updateSightcone();
+
+        //Add raycaster and map objects
+        raycaster.mapGameObjects(explosionGroup.getChildren(), true);
+        ray.setOrigin(this.player.getTopCenter().x, this.player.getTopCenter().y);
+        ray.setAngleDeg(this.player.angle - 90);
+        intersections = ray.castCone();
+        raycaster.removeMappedObjects(explosionGroup.getChildren());
+
+        //Draw lines if debug is true
+        //Check type of object looked at
+        rayGraphics.clear();
+        let canSeeAnyExplosions = false;
+        for (let intersection of intersections) {
+
+            if (coneDebug === true) {
+                let line = new Phaser.Geom.Line(ray.origin.x, ray.origin.y, intersection.x, intersection.y);
+                rayGraphics.strokeLineShape(line);
+            }
+
+            if (intersection.object) {
+                if (intersection.object.type === 'Arc') {
+                    canSeeAnyExplosions = true;
+                }
+            }
+        }
+        isLooking = canSeeAnyExplosions;
+
+        if (!isLooking && (coolometerCount < coolometerMax)){
+            coolometerCount = Math.min(coolometerMax, coolometerCount + 0.3);
+        }
+        else if (isLooking && (coolometerCount > 0)){
+            coolometerCount = Math.max(0, coolometerCount - 10);
         }
 
-        if (keys.x.isDown) { // Remove on release
-            exploder.stopWave();
+        // the higher up the coolometer we are the higher exponent we use
+        if (this.score.shuffling) {
+            this.score.setCombo(Math.pow(Math.floor(coolometerCount), 3) + 1);
+        } else if (this.score.buzzing) {
+            this.score.setCombo(Math.pow(Math.floor(coolometerCount), 2) + 1);
+        } else {
+            this.score.setCombo(Math.floor(coolometerCount) + 1);
         }
-
-        if (isLooking && coolometerCount<coolometerMax){
-            coolometerCount++;
-        }
-        else if (!isLooking && coolometerCount>0){
-            coolometerCount--;
-        }
-
-        this.score.setCombo(coolometerCount + 1);
         this.score.incScore();
 
         // update coolometer
@@ -157,23 +227,104 @@ export default class GameScene extends Phaser.Scene {
         rectangle.y = 550 - coolometerCount;
         graphics.fillRectShape(rectangle);
 
-        //update sightcone
-        sightcone.angle = player.angle -90;
-        sightcone.x = player.x + (120*Math.cos(player.angle * (Math.PI/180)));
-        sightcone.y = player.y + (120*Math.sin(player.angle * (Math.PI/180)));
+        this.updateScoreTweens();
 
-        isLooking = (this.physics.overlap(sightcone, explosionGroup));
+        this.updateAchievements();
 
-        if (isLooking){
-            sightcone.setFillStyle(0xff0000);
+        this.checkDeath();
+    }
+
+    updateSightcone() {
+        sightcone.angle = this.player.angle - 180;
+        sightcone.x = this.player.getTopCenter().x + ((rayRange / 2)*Math.cos((this.player.angle - 90) * (Math.PI/180)));
+        sightcone.y = this.player.getTopCenter().y + ((rayRange / 2)*Math.sin((this.player.angle - 90) * (Math.PI/180)));
+    }
+
+    unlockAchievement(name) {
+        this.model._achievements[name].unlocked = true;
+        this.overlayManager.overlayMap['achievements'].updateAchievements();
+    }
+
+    updateAchievements() {
+        // lookedAtExplosion1
+        if (isLooking) {
+            this.unlockAchievement('lookedAtExplosion1');
         }
-        else {
-            sightcone.setFillStyle(0x6666ff);
+
+        // lookedAtExplosion2
+        // @NOTE: this doesn't work properly if they start the game by
+        // hitting ESC from the title overlay, not worth fixing
+        if (isLooking && (Date.now() - this.gameStartTime) <= 2000) {
+            this.unlockAchievement('lookedAtExplosion2');
+        }
+
+        // distanceWalked
+        this.totalDistance += this.player.body.speed;
+        // arbitrary long distance to represent 500 miles
+        if (this.totalDistance > 5000000) {
+            this.unlockAchievement('distanceWalked');
+        }
+
+        // highScore1
+        if (this.score.currentScore > 1000000) {
+            this.unlockAchievement('highScore1');
+        }
+
+        // highScore2
+        if (this.score.currentScore > 1000000000) {
+            this.unlockAchievement('highScore2');
+        }
+
+        // highScore3
+        if (this.score.currentScore > 1000000000000) {
+            this.unlockAchievement('highScore3');
+        }
+
+        // maxCool
+        if (coolometerCount == coolometerMax) {
+            this.unlockAchievement('maxCool');
+        }
+
+        // stayCool
+        if (coolometerCount == coolometerMax) {
+            if (this.maxCoolTime == null) {
+                this.maxCoolTime = Date.now();
+            } else {
+                // @NOTE: you can cheat by pausing while at max cool,
+                // not worth fixing
+                if (Date.now() - this.maxCoolTime > 30000) {
+                    this.unlockAchievement('stayCool');
+                }
+            }
+        } else {
+            this.maxCoolTime = null;
         }
     }
 
-    testFunction() {
-        console.log("Hit");
+    // If we go above 50% cool enable the buzzing tween, if above 75%
+    // cool also enable the shuffling tween. Use respectively lower
+    // percentages to turn tweens off in order to debounce.
+    //
+    // Also (kinda hacky) update the exploder frequency to make the
+    // game harder at higher coolness.
+    updateScoreTweens() {
+        if (!this.score.buzzing && coolometerCount > (coolometerMax * 0.5)) {
+            this.score.enableBuzzing();
+            this.exploder.blastWaveCount = 2;
+        }
+        if (this.score.buzzing && coolometerCount < (coolometerMax * 0.4)) {
+            this.score.disableBuzzing();
+            this.exploder.blastWaveCount = 1;
+        }
+
+        if (!this.score.shuffling && coolometerCount > (coolometerMax * 0.75)) {
+            this.score.enableShuffling();
+            this.exploder.blastWaveCount = 3;
+        }
+        if (this.score.shuffling && coolometerCount < (coolometerMax * 0.65)) {
+            this.score.disableShuffling();
+            this.exploder.blastWaveCount = 2;
+        }
     }
 
     muffleMusic() {
@@ -192,7 +343,7 @@ export default class GameScene extends Phaser.Scene {
         this.tweens.pauseAll();
         this.overlayManager.unpauseAllCursorTweens();
         this.muffleMusic();
-        exploder.blastTimer.paused = true;
+        this.exploder.blastTimer.paused = true;
     }
 
     unpauseGame() {
@@ -200,7 +351,7 @@ export default class GameScene extends Phaser.Scene {
         this.physics.resume();
         this.tweens.resumeAll();
         this.unmuffleMusic();
-        exploder.blastTimer.paused = false;
+        this.exploder.blastTimer.paused = false;
     }
 
     // handle pausing/unpausing the game
@@ -216,23 +367,39 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
+    checkDeath() {
+        let touchingExplosion = false;
+        explosionGroup.getChildren().forEach((e) => {
+            let d = Math.sqrt(Math.pow(e.x - this.player.x, 2) + Math.pow(e.y - this.player.y, 2));
+            if (d < e.radius) {
+                touchingExplosion = true;
+            }
+        }, this);
+
+        if (touchingExplosion) {
+            this.endGame();
+        }
+    }
+
     // the player has died, go to the gameOver overlay
     endGame() {
         this.model._currentScore = this.score.currentScore;
         this.pauseGame();
         this.overlayManager.openTarget('gameOver');
-        // @TODO: this is a little bit icky, ideally it would be nice
+        // @NOTE: this is a little bit icky, ideally it would be nice
         // if overlays had onOpen and onClose methods they could
         // override to do stuff like this. Too much work for now.
         this.overlayManager.overlayMap['gameOver'].updateScore();
     }
 
     restartGame() {
-        player.setVelocity(0);
-        player.setLocation(100, 100);
+        this.player.setVelocity(0);
+        this.player.setRotation(0);
+        this.player.setLocation(100, 100);
         this.score.resetCombo();
         this.score.resetScore();
         coolometerCount = 0;
+        this.gameStartTime = Date.now();
 
         // @TODO: add whatever is required to reset explosions
     }
