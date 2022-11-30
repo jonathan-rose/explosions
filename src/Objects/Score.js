@@ -49,6 +49,14 @@ export default class Score extends Phaser.GameObjects.Container {
             paused: true,
             delay: 15
         });
+
+        this.comboText = this.scene.add.text(
+            765,
+            570,
+            "x" + this.currentCombo,
+            {fontSize: '32px',
+             fill: '#000'}
+        ).setOrigin(1, 0.5);
     }
 
     addScoreTexts() {
@@ -81,6 +89,7 @@ export default class Score extends Phaser.GameObjects.Container {
         this.scoreTexts.forEach(s => {
             s.setText(Utils.sanitize(this.currentScore));
         });
+        this.comboText.setText('x'+ this.currentCombo);
     }
 
     // reset score

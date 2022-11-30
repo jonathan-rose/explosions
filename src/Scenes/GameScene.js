@@ -64,6 +64,7 @@ export default class GameScene extends Phaser.Scene {
         this.score = new Score(this);
 
         this.player = new Player(this, playerStart.x, playerStart.y, 'player');
+        this.player.setDepth(-3);
 
         this.totalDistance = 0;
 

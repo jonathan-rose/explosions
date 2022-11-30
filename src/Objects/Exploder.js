@@ -56,6 +56,34 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
         warning.setDepth(-2);
         explosion.setDepth(-1);
 
+        var particles = this.scene.add.particles('red');
+        particles.createEmitter({
+            alpha: { start: 1, end: 0 },
+            scale: { start: 0.5, end: 4 },
+            speed: 100,
+            lifespan: 300,
+            blendMode: 'ADD',
+            frequency: 10,
+            maxParticles: 20,
+            delay: delay*1000,
+            x: x,
+            y: y
+        });
+
+        var particles2 = this.scene.add.particles('yellow');
+        particles2.createEmitter({
+            alpha: { start: 1, end: 0 },
+            scale: { start: 0.5, end: 4 },
+            speed: 100,
+            lifespan: 300,
+            blendMode: 'ADD',
+            frequency: 10,
+            maxParticles: 20,
+            delay: delay*1000,
+            x: x,
+            y: y
+        });
+
         let explosionTween = this.scene.tweens.add({
             targets: explosion,
             delay: delay * 1000,

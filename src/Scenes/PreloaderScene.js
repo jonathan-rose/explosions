@@ -71,8 +71,8 @@ export default class PreloaderScene extends Phaser.Scene {
         this.load.image('coolometer-foreground', 'assets/img/coolometerForeground.png');
         this.load.image('coolometer-text', 'assets/img/coolometerText.png');
 
-        this.load.image('red', 'assets/particles/redSpark.png');
-
+        this.load.image('red', 'assets/particles/fireSpark.png');
+        this.load.image('yellow', 'assets/particles/yellowSparkle.png');
 
         this.load.image('title_cool', 'assets/img/title/cool.png');
         this.load.image('title_guys', 'assets/img/title/guys.png');
