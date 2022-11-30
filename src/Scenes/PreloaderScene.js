@@ -64,14 +64,10 @@ export default class PreloaderScene extends Phaser.Scene {
         });
 
         // load assets needed in our game
-        this.load.image('button', 'assets/img/button.png');
-        this.load.image('buttonPressed', 'assets/img/buttonPressed.png');
-        this.load.image('box', 'assets/img/boxUnchecked.png');
-        this.load.image('checkedBox', 'assets/img/boxChecked.png');
         this.load.image('logo', 'assets/img/logo.png');
-        this.load.image('sky', 'assets/img/sky.png');
+        this.load.image('background', 'assets/img/background4.png');
         this.load.image('green', 'assets/particles/green.png');
-        this.load.image('player', 'assets/img/player.png');
+        this.load.image('player', 'assets/img/playerTop.png');
         this.load.image('coolometer-background', 'assets/img/coolometerBackground.png');
         this.load.image('coolometer-foreground', 'assets/img/coolometerForeground.png');
 
