@@ -24,7 +24,7 @@ var rayGraphics;
 var intersections;
 var playerStart;
 var rayAngle = 50; // Need to make this determine by rayRange
-var rayRange = 300; // Also determines sightcone size :)
+var rayRange = 270; // Also determines sightcone size :)
 
 var coneDebug = false;
 
