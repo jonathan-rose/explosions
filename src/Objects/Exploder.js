@@ -11,6 +11,8 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
         this.blastWaveCount = 1;
 
         this.explosionGroup = this.scene.physics.add.group();
+        this.warningGroup = this.scene.physics.add.group();
+        this.tweenCollection = [];
     }
 
     setLocation(x, y) {
@@ -36,7 +38,9 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
         var startingRadius = 0;
 
         var warning = this.scene.add.circle(x, y, radius, 0xF2CD60, 0.45);
-        this.scene.tweens.add({
+        this.warningGroup.add(warning);
+
+        let warningTween = this.scene.tweens.add({
             targets: warning,
             alpha: 0.35,
             step: 1,
@@ -44,13 +48,15 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
             yoyo: true,
             repeat: -1
         });
+        this.tweenCollection.push(warningTween);
 
         var explosion = this.scene.add.circle(x, y, startingRadius, 0xF25757); // Should the starting radius be an argument?
+        this.explosionGroup.add(explosion);
 
         warning.setDepth(-2);
         explosion.setDepth(-1);
 
-        this.scene.tweens.add({
+        let explosionTween = this.scene.tweens.add({
             targets: explosion,
             delay: delay * 1000,
             radius: radius,
@@ -60,17 +66,7 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
                 warning.destroy();
             },
         });
-
-        this.explosionGroup.add(explosion);
-
-        // var particles = this.add.particles('red');
-
-        // var emitter = particles.createEmitter();
-
-        // emitter.setPosition(400, 300);
-        // emitter.setSpeed(200);
-        // emitter.setLifespan(3000);
-        // emitter.setScale(0.5);
+        this.tweenCollection.push(explosionTween);
     }
 
     createExplosions(count = 1) { // These need to be tweaked along with the explode() function
@@ -81,5 +77,16 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
             var randDuration = Phaser.Math.FloatBetween(0.25, 1);
             this.explode(randX, randY, randRadius, randDuration);
         }
+    }
+
+    // We need to remove all tweens for warnings and explosions first
+    // (so they're not trying to update non-existent objects), then
+    // remove all warnings and explosions.
+    reset() {
+        this.tweenCollection.forEach((t) => { t.remove(); });
+        this.tweenCollection = [];
+        this.explosionGroup.clear(true, true);
+        this.warningGroup.clear(true, true);
+        this.blastWaveCount = 1;
     }
 }
