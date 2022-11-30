@@ -12,7 +12,7 @@ import TitleOverlay from '../Overlays/TitleOverlay';
 var keys;
 var rectangle;
 var graphics;
-var isLooking = true;
+var isLooking = false;
 var coolometerCount;
 var coolometerMax;
 var sightcone;
@@ -239,6 +239,12 @@ export default class GameScene extends Phaser.Scene {
         sightcone.angle = this.player.angle - 180;
         sightcone.x = this.player.getTopCenter().x + ((rayRange / 2)*Math.cos((this.player.angle - 90) * (Math.PI/180)));
         sightcone.y = this.player.getTopCenter().y + ((rayRange / 2)*Math.sin((this.player.angle - 90) * (Math.PI/180)));
+
+        if (isLooking) {
+            sightcone.fillColor = 0xF25757;
+        } else {
+            sightcone.fillColor = 0x78e900;
+        }
     }
 
     unlockAchievement(name) {
