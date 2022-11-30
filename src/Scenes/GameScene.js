@@ -16,6 +16,7 @@ var isLooking = true;
 var coolometerCount;
 var coolometerMax;
 var sightcone;
+var warningGroup;
 var explosionGroup;
 var raycaster;
 var ray;
@@ -69,6 +70,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.exploder.startWave();
         explosionGroup = this.exploder.explosionGroup;
+        warningGroup = this.exploder.warningGroup;
 
         keys = this.input.keyboard.addKeys({
             'up': Phaser.Input.Keyboard.KeyCodes.UP,
@@ -127,7 +129,6 @@ export default class GameScene extends Phaser.Scene {
         };
         this.overlayManager = new OverlayManager(this, overlayMap);
     }
-
 
     addSightcone() {
         sightcone = this.add.triangle(
@@ -205,7 +206,7 @@ export default class GameScene extends Phaser.Scene {
         isLooking = canSeeAnyExplosions;
 
         if (!isLooking && (coolometerCount < coolometerMax)){
-            coolometerCount = Math.min(coolometerMax, coolometerCount + 0.3);
+            coolometerCount = Math.min(coolometerMax, coolometerCount + 0.6);
         }
         else if (isLooking && (coolometerCount > 0)){
             coolometerCount = Math.max(0, coolometerCount - 10);
@@ -359,11 +360,6 @@ export default class GameScene extends Phaser.Scene {
         if (this.overlayManager.overlayStack.length == 0) {
             this.pauseGame();
             this.overlayManager.openTarget('pause');
-        } else {
-            this.overlayManager.disableTop();
-            if (this.overlayManager.overlayStack.length == 0) {
-                this.unpauseGame();
-            }
         }
     }
 
@@ -400,7 +396,6 @@ export default class GameScene extends Phaser.Scene {
         this.score.resetScore();
         coolometerCount = 0;
         this.gameStartTime = Date.now();
-
-        // @TODO: add whatever is required to reset explosions
+        this.exploder.reset();
     }
 };
