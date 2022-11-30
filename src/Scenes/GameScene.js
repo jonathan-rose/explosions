@@ -43,6 +43,7 @@ export default class GameScene extends Phaser.Scene {
         this.coolometerBackground = this.add.image(725, 300, 'coolometer-background');
         this.coolometerForeground = this.add.image(725, 300, 'coolometer-foreground');
         this.coolometerForeground.setDepth(3);
+        this.add.image(725, 40, 'coolometer-text');
 
 
         this.sys.game.globals.music = this.sound.add(
