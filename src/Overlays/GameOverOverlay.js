@@ -5,7 +5,7 @@ export default class GameOverOverlay extends Overlay {
     constructor(scene) {
         super(scene);
 
-        this.yOffset = 500;
+        this.yOffset = 400;
 
         this.title = this.scene.add.text(
             this.centerX,
@@ -27,7 +27,11 @@ export default class GameOverOverlay extends Overlay {
 
         this.navData = [
             {text: 'play again',
-             action: 'RESTART_GAME'}
+             action: 'RESTART_GAME'},
+             {text: 'achievements',
+             action: 'OPEN_OVERLAY',
+             target: 'achievements'
+             }
         ];
 
         this.initNavs();

@@ -91,6 +91,14 @@ export default class GameScene extends Phaser.Scene {
         this.overlayManager.openTarget('title'); // Changed for testing
         this.isRunning = false;
         this.exploder.blastTimer.paused = true;
+
+        this.escText = this.add.text(
+            40,
+            30,
+            "ESC",
+            {fontSize: '32px',
+             fill: '#000'}
+        ).setOrigin(0.5);
     }
 
     addCoolometer() {
