@@ -28,7 +28,7 @@ export default class Model {
                        unlocked: false,
                        image: 'achievement_cool2'},
             unknown: {description: '?????????',
-                      secretDescription: 'Look at the source code for the game ;)',
+                      secretDescription: 'Look at the game source code -- YOU WIN!',
                       unlocked: false}
         };
     }
