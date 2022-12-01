@@ -6,7 +6,7 @@ export default class Model {
             lookedAtExplosion1: {description: 'Look at an explosion :(',
                                  unlocked: false,
                                  image: 'achievement_lookedAtExplosion1'},
-            lookedAtExplosion2: {description: 'Look at an explosion in the first 2 seconds of a game',
+            lookedAtExplosion2: {description: 'Look at an explosion in the first 10 seconds of a game',
                                  unlocked: false,
                                  image: 'achievement_lookedAtExplosion2'},
             distanceWalked: {description: 'Walk 500 miles',
@@ -28,7 +28,7 @@ export default class Model {
                        unlocked: false,
                        image: 'achievement_cool2'},
             unknown: {description: '?????????',
-                      secretDescription: 'Look at the source code for the game ;)',
+                      secretDescription: 'Look at the game source code -- YOU WIN!',
                       unlocked: false}
         };
     }

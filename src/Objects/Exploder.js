@@ -12,6 +12,7 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
 
         this.explosionGroup = this.scene.physics.add.group();
         this.warningGroup = this.scene.physics.add.group();
+        this.particlesCollection = [];
         this.tweenCollection = [];
     }
 
@@ -69,6 +70,7 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
             x: x,
             y: y
         });
+        this.particlesCollection.push(particles);
 
         var particles2 = this.scene.add.particles('yellow');
         particles2.createEmitter({
@@ -83,6 +85,7 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
             x: x,
             y: y
         });
+        this.particlesCollection.push(particles2);
 
         let explosionTween = this.scene.tweens.add({
             targets: explosion,
@@ -113,6 +116,8 @@ export default class Exploder extends Phaser.Physics.Arcade.Sprite {
     reset() {
         this.tweenCollection.forEach((t) => { t.remove(); });
         this.tweenCollection = [];
+        this.particlesCollection.forEach((p) => { p.destroy(); });
+        this.particlesCollection = [];
         this.explosionGroup.clear(true, true);
         this.warningGroup.clear(true, true);
         this.blastWaveCount = 1;
