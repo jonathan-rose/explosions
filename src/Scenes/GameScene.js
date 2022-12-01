@@ -276,7 +276,7 @@ export default class GameScene extends Phaser.Scene {
         // lookedAtExplosion2
         // @NOTE: this doesn't work properly if they start the game by
         // hitting ESC from the title overlay, not worth fixing
-        if (isLooking && (Date.now() - this.gameStartTime) <= 2000) {
+        if (isLooking && (Date.now() - this.gameStartTime) <= 10000) {
             this.unlockAchievement('lookedAtExplosion2');
         }
 
