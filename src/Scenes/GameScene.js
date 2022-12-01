@@ -187,7 +187,7 @@ export default class GameScene extends Phaser.Scene {
         if (keys.down.isDown) {
             this.player.reverse();
         }
-        
+
         if (Phaser.Input.Keyboard.JustDown(keys.space)) {
             this.player.quickturn();
         }
@@ -224,7 +224,7 @@ export default class GameScene extends Phaser.Scene {
             coolometerCount = Math.min(coolometerMax, coolometerCount + 0.6);
         }
         else if (isLooking && (coolometerCount > 0)){
-            coolometerCount = Math.max(0, coolometerCount - 10);
+            coolometerCount = Math.max(0, coolometerCount - 3);
         }
 
         // the higher up the coolometer we are the higher exponent we use
@@ -388,7 +388,8 @@ export default class GameScene extends Phaser.Scene {
         let touchingExplosion = false;
         explosionGroup.getChildren().forEach((e) => {
             let d = Math.sqrt(Math.pow(e.x - this.player.x, 2) + Math.pow(e.y - this.player.y, 2));
-            if (d < e.radius) {
+            // 25px is the radius of the player, use 22 to be slightly generous
+            if (d - 22 < e.radius) {
                 touchingExplosion = true;
             }
         }, this);
