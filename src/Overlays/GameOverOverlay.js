@@ -5,23 +5,31 @@ export default class GameOverOverlay extends Overlay {
     constructor(scene) {
         super(scene);
 
+        this.model = this.scene.sys.game.globals.model;
         this.yOffset = 400;
+        let style = {fontSize: '32px', fill: '#FFF'};
 
         this.title = this.scene.add.text(
             this.centerX,
             100,
             'Game Over',
-            {fontSize: '32px',
-             fill: '#FFF'}
+            style
         ).setOrigin(0.5);
         this.add(this.title);
 
-        this.highscoreText = this.scene.add.text(
+        this.scoreText = this.scene.add.text(
             this.centerX,
             200,
             '',
-            {fontSize: '32px',
-             fill: '#FFF'}
+            style
+        ).setOrigin(0.5);
+        this.add(this.scoreText);
+
+        this.highscoreText = this.scene.add.text(
+            this.centerX,
+            300,
+            'Highscore: ' + this.model._highscore,
+            style
         ).setOrigin(0.5);
         this.add(this.highscoreText);
 
@@ -38,8 +46,6 @@ export default class GameOverOverlay extends Overlay {
     }
 
     updateScore() {
-        this.model = this.scene.sys.game.globals.model;
-
         let prev = this.model._highscore;
         let curr = this.model._currentScore;
         let text = 'Score: ';
@@ -49,6 +55,7 @@ export default class GameOverOverlay extends Overlay {
             text = 'New Highscore: ';
         }
 
-        this.highscoreText.setText(text + curr);
+        this.scoreText.setText(text + curr);
+        this.highscoreText.setText('Highscore: ' + this.model._highscore);
     }
 }
